@@ -66,7 +66,19 @@ if (PHP_SAPI === 'cli-server') {
         exit;
     }
 
-    $__sh_file = __DIR__ . parse_url($__sh_request, PHP_URL_PATH);
+    $__sh_path = parse_url($__sh_request, PHP_URL_PATH) ?: '/';
+    $__sh_file = __DIR__ . $__sh_path;
+
+    // Vercel cleanUrls maps /about-us to about-us.html. Mirror that behavior
+    // locally so static pages keep their local CSS and image asset URLs.
+    if (!is_file($__sh_file)
+        && pathinfo($__sh_path, PATHINFO_EXTENSION) === ''
+        && is_file(__DIR__ . $__sh_path . '.html')) {
+        header('Content-Type: text/html; charset=UTF-8');
+        readfile(__DIR__ . $__sh_path . '.html');
+        exit;
+    }
+
     if (is_file($__sh_file) && basename($__sh_file) !== 'index.php') {
         $__sh_ext = strtolower(pathinfo($__sh_file, PATHINFO_EXTENSION));
         $__sh_allow = ['css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico', 'woff', 'woff2', 'ttf',

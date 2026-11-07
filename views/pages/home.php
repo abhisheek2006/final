@@ -41,11 +41,6 @@ $waBooking = whatsapp_link(
                 </a>
             </div>
 
-            <ul class="hero__trust">
-                <li><?= icon('certificate', 'icon icon--xs', 16) ?> Registered homoeopathic practice</li>
-                <li><?= icon('clock', 'icon icon--xs', 16) ?> Same-day appointment confirmation</li>
-                <li><?= icon('note', 'icon icon--xs', 16) ?> Written prescription every visit</li>
-            </ul>
         </div>
 
         <div class="hero__media">
