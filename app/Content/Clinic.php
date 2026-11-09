@@ -57,12 +57,13 @@ final class Clinic
         return [
             'NH4 main road, Garacharma',
             'Near Susane roses',
+            'Andaman & Nicobar Islands 744105',
         ];
     }
 
     public static function addressOneLine(): string
     {
-        return 'NH4 main road, Garacharma, near Susane roses';
+        return 'NH4 main road, Garacharma, Near Susane roses, Andaman & Nicobar Islands 744105';
     }
 
     /**
@@ -74,7 +75,7 @@ final class Clinic
     public static function mapQuery(): string
     {
         return 'SWASTI HOMOEO CLINIC | Dr. Smriti Das, BHMS, MD (Hom) | NH4 main road, '
-            . 'Garacharma, near Susane roses';
+            . 'Garacharma, near Susane roses, Andaman and Nicobar Islands 744105';
     }
 
     /**

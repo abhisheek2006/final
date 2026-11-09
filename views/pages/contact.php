@@ -15,8 +15,9 @@ $dayLabels = [
     'saturday'  => 'Saturday',
     'sunday'    => 'Sunday',
 ];
-$nowMinutes = (int) date('H') * 60 + (int) date('i');
-$todayKey   = strtolower((string) date('l'));
+$clinicNow  = new DateTimeImmutable('now', new DateTimeZone('Asia/Kolkata'));
+$nowMinutes = (int) $clinicNow->format('G') * 60 + (int) $clinicNow->format('i');
+$todayKey   = strtolower($clinicNow->format('l'));
 $isToday    = static function (string $day) use ($todayKey): bool {
     return $day === $todayKey;
 };
@@ -198,7 +199,7 @@ $isToday    = static function (string $day) use ($todayKey): bool {
 
             <div class="panel">
                 <h2 class="panel__title">Opening hours</h2>
-                <table class="hours">
+                <table class="hours" data-hours-table>
                     <caption class="visually-hidden">Weekly opening hours</caption>
                     <tbody>
                     <?php foreach ($hours as $day => $slot): ?>
@@ -216,8 +217,11 @@ $isToday    = static function (string $day) use ($todayKey): bool {
                             $periodLabels[] = minutes_to_label($period['open']) . ' – ' . minutes_to_label($period['close']);
                         }
                         ?>
-                        <tr class="hours__row<?= $isToday($day) ? ' hours__row--today' : '' ?>">
-                            <th scope="row"><?= e($dayLabels[$day] ?? ucfirst((string) $day)) ?></th>
+                        <tr class="hours__row<?= $isToday($day) ? ' hours__row--today' : '' ?>" data-hours-day="<?= e(strtolower((string) $day)) ?>">
+                            <th scope="row">
+                                <?= e($dayLabels[$day] ?? ucfirst((string) $day)) ?>
+                                <?php if ($isToday($day)): ?><span class="hours__today-label">Today</span><?php endif; ?>
+                            </th>
                             <td>
                                 <?php if (!empty($slot['closed'])): ?>
                                     <span class="hours__closed">Closed</span>

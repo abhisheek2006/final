@@ -31,6 +31,32 @@
         }
     }
 
+    /* -------------------------------------------- today's clinic hours */
+
+    var hoursTable = document.querySelector('[data-hours-table]');
+
+    if (hoursTable && window.Intl && Intl.DateTimeFormat) {
+        var clinicToday = new Intl.DateTimeFormat('en-US', {
+            weekday: 'long',
+            timeZone: 'Asia/Kolkata'
+        }).format(new Date()).toLowerCase();
+
+        Array.prototype.forEach.call(hoursTable.querySelectorAll('[data-hours-day]'), function (row) {
+            var isToday = row.getAttribute('data-hours-day') === clinicToday;
+            row.classList.toggle('hours__row--today', isToday);
+
+            var label = row.querySelector('.hours__today-label');
+            if (isToday && !label) {
+                label = document.createElement('span');
+                label.className = 'hours__today-label';
+                label.textContent = 'Today';
+                row.querySelector('th').appendChild(label);
+            } else if (!isToday && label) {
+                label.remove();
+            }
+        });
+    }
+
 
     /* ------------------------------------------------------------ FAQ search */
 
