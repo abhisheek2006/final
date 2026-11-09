@@ -201,12 +201,6 @@ final class Clinic
                 'text'  => 'We tailor each prescription to your age and sensitivity, with no hidden '
                     . 'antibiotics, steroids or sedatives.',
             ],
-            [
-                'icon'  => 'clock',
-                'title' => 'Easy, safe and quick recovery',
-                'text'  => 'Book a slot, share your history and leave with a written plan. Follow-ups '
-                    . 'are focused and pressure-free.',
-            ],
         ];
     }
 
