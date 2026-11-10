@@ -139,6 +139,6 @@ final class Doctor
      */
     public static function languages(): array
     {
-        return ['English', 'Hindi', 'Bengali', 'Kokborok (basic)'];
+        return ['English', 'Hindi', 'Bengali'];
     }
 }

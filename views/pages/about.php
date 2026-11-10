@@ -7,10 +7,7 @@
  * @var array<int,array{heading:string,body:string}> $biography
  * @var array<int,array{title:string,text:string,icon:string}> $credentials
  * @var array<int,string> $languages
- * @var array<int,array{value:string,label:string,icon:string}> $stats
- * @var array<int,array{title:string,text:string,icon:string}> $pillars
  * @var array<int,array<string,mixed>> $testimonials
- * @var array<int,array<string,mixed>> $services
  */
 ?>
 
@@ -72,28 +69,6 @@
     </div>
 </section>
 
-<section class="section section--soft" id="approach">
-    <div class="container">
-        <header class="section__head" data-reveal>
-            <p class="eyebrow">How we work</p>
-            <h2 class="section__title">Three things we will not compromise on</h2>
-            <p class="section__lead section__lead--center">
-                These are the principles behind every prescription written at the clinic.
-            </p>
-        </header>
-
-        <div class="cards cards--three">
-            <?php foreach ($pillars as $pillar): ?>
-            <article class="card card--pillar" data-reveal>
-                <span class="card__icon"><?= icon($pillar['icon'], 'icon', 26) ?></span>
-                <h3 class="card__title"><?= e($pillar['title']) ?></h3>
-                <p class="card__text"><?= e($pillar['text']) ?></p>
-            </article>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
 <section class="section">
     <div class="container">
         <header class="section__head" data-reveal>
@@ -111,36 +86,6 @@
             <?php endforeach; ?>
         </div>
 
-        <ul class="stats stats--inline">
-            <?php foreach ($stats as $stat): ?>
-            <li class="stat">
-                <span class="stat__value"><?= e($stat['value']) ?></span>
-                <span class="stat__label"><?= e($stat['label']) ?></span>
-            </li>
-            <?php endforeach; ?>
-        </ul>
-    </div>
-</section>
-
-<section class="section section--soft section--services-preview">
-    <div class="container">
-        <header class="section__head" data-reveal>
-            <p class="eyebrow">What we treat</p>
-            <h2 class="section__title">The four most requested appointments</h2>
-        </header>
-
-        <div class="cards cards--four">
-            <?php foreach ($services as $service): ?>
-            <article class="card card--service card--small" data-reveal>
-                <span class="card__icon"><?= icon($service['icon'], 'icon', 22) ?></span>
-                <h3 class="card__title card__title--sm"><?= e($service['title']) ?></h3>
-                <p class="card__text"><?= e(truncate($service['intro'], 120)) ?></p>
-                <a class="card__link" href="<?= e(url('/book-consultation')) ?>">
-                    Book this appointment <?= icon('arrow-right', 'icon icon--xs', 15) ?>
-                </a>
-            </article>
-            <?php endforeach; ?>
-        </div>
     </div>
 </section>
 
