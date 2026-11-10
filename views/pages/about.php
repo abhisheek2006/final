@@ -52,14 +52,14 @@
                 <?php endforeach; ?>
             </div>
 
-            <div class="about-award-gallery" aria-label="Dr. Smriti Das receiving the Dr. Malati Allen Noble Award">
-                <figure class="about-award-gallery__item">
+            <div class="about-award-gallery" data-hero-slides aria-label="Dr. Smriti Das receiving the Dr. Malati Allen Noble Award">
+                <figure class="about-award-gallery__slide hero__slide is-active" aria-hidden="false">
                     <img src="<?= e(asset('assets/images/about/dr-smriti-malati-allen-award-medal.jpg')) ?>"
                          alt="Dr. Smriti Das receiving the Dr. Malati Allen Noble Award medal"
                          width="3216" height="2136" loading="lazy" decoding="async">
                     <figcaption>Receiving the Dr. Malati Allen Noble Award</figcaption>
                 </figure>
-                <figure class="about-award-gallery__item">
+                <figure class="about-award-gallery__slide hero__slide" aria-hidden="true">
                     <img src="<?= e(asset('assets/images/about/dr-smriti-malati-allen-award-certificate.jpg')) ?>"
                          alt="Dr. Smriti Das receiving her Dr. Malati Allen Noble Award certificate"
                          width="3216" height="2136" loading="lazy" decoding="async">

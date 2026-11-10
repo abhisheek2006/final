@@ -5417,31 +5417,44 @@ a:hover {
 
 }
 .about-award-gallery {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
     margin-top: 22px;
-}
-
-.about-award-gallery__item {
-    min-width: 0;
-    margin: 0;
     overflow: hidden;
     border: 1px solid var(--line-soft);
     border-radius: 14px;
     background: var(--bg-tint-2);
 }
 
-.about-award-gallery__item img {
+.about-award-gallery__slide {
+    z-index: 0;
+    margin: 0;
+}
+
+.about-award-gallery__slide.is-active {
+    z-index: 1;
+}
+
+.about-award-gallery__slide img {
     display: block;
     width: 100%;
-    aspect-ratio: 3 / 2;
+    height: 100%;
     object-fit: cover;
 }
 
-.about-award-gallery__item figcaption {
-    padding: 10px 12px;
-    color: var(--ink-500);
+.about-award-gallery__slide figcaption {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 28px 16px 13px;
+    color: #fff;
+    background: linear-gradient(transparent, rgba(0, 0, 0, .68));
     font-size: .8rem;
     line-height: 1.45;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .about-award-gallery__slide {
+        transition: none;
+    }
 }
