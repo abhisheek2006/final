@@ -45,7 +45,9 @@
 
             <div class="prose">
                 <?php foreach ($biography as $block): ?>
+                    <?php if ($block['heading'] !== ''): ?>
                     <h3><?= e($block['heading']) ?></h3>
+                    <?php endif; ?>
                     <p><?= e($block['body']) ?></p>
                 <?php endforeach; ?>
             </div>
