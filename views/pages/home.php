@@ -108,7 +108,7 @@ $waBooking = whatsapp_link(
             </div>
             <div class="split__badge">
                 <p class="split__badge-value"><?= e($doctor['short_qualification'] ?? 'BHMS, MD (WBUHS)') ?></p>
-                <p class="split__badge-label">Principal Homoeopathic Physician</p>
+                <p class="split__badge-label">Homoeopathic Physician</p>
             </div>
         </div>
 

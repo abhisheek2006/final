@@ -48,7 +48,7 @@ final class FaqData
                 [
                     'q' => 'Who treats patients at the clinic?',
                     'a' => 'All consultations are conducted by Dr. Smriti Das, BHMS, MD (Homeopathy, '
-                        . 'WBUHS), the principal homoeopathic physician, with more than eight years of '
+                        . 'WBUHS), the homoeopathic physician, with more than eight years of '
                         . 'clinical experience. Registration particulars are displayed at the clinic and '
                         . 'available on request.',
                 ],
