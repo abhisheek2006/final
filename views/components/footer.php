@@ -134,7 +134,6 @@ $emailCompose = $email !== ''
 
             <ul class="site-footer__legal">
                 <li><a class="site-footer__legal-link" href="<?= e(url('/privacy-policy')) ?>">Privacy Policy</a></li>
-                <li><a class="site-footer__legal-link" href="<?= e(url('/sitemap.xml')) ?>">Sitemap</a></li>
                 <li><a class="site-footer__legal-link" href="<?= e(url('/faq')) ?>">FAQ</a></li>
             </ul>
         </div>
