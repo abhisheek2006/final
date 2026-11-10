@@ -64,7 +64,7 @@ $waBooking = whatsapp_link(
                 <div class="hero__caption">
                     <p class="hero__caption-kicker">Classical homoeopathy in Sri Vijaya Puram</p>
                     <p class="hero__caption-title">Treatment that respects your body’s own healing</p>
-                    <p class="hero__caption-text">Individualised remedies selected from your own symptoms and history — not a fixed package deal for a named disease.</p>
+                    <p class="hero__caption-text">Individualised remedies selected from your own symptoms and history.</p>
                 </div>
             </div>
 
