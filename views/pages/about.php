@@ -19,8 +19,6 @@
     'heading'   => 'A small clinic that takes its prescribing seriously',
     'lead'      => \App\Content\Clinic::intro(),
     'trail'     => [['name' => 'Home', 'url' => '/'], ['name' => 'About Us']],
-    'image'     => '/assets/images/about/clinic-interior.svg',
-    'imageAlt'  => 'Illustration of the reception and consultation area at Swasti Homoeo Clinic',
 ]) ?>
 
 <section class="section" id="doctor">
