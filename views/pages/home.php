@@ -48,7 +48,6 @@ $waBooking = whatsapp_link(
                 <?php
                 $clinicPhotos = [
                     ['file' => 'clinic-room.jpg', 'alt' => 'Consultation room at Swasti Homoeo Clinic in Garacharma'],
-                    ['file' => 'clinic-room-2.jpg', 'alt' => 'Dr. Smriti Das at the clinic reception in Sri Vijaya Puram'],
                     ['file' => 'clinic-room-3.jpg', 'alt' => 'Reception area at Swasti Homoeo Clinic'],
                     ['file' => 'clinic-room-4.jpg', 'alt' => 'Entrance to Swasti Homoeo Clinic in Garacharma'],
                     ['file' => 'clinic-room-5.jpg', 'alt' => 'Clinic interior and waiting area at Swasti Homoeo Clinic'],
