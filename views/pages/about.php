@@ -5,7 +5,6 @@
  * @var array<string,mixed> $clinic
  * @var array<string,mixed> $doctor
  * @var array<int,array{heading:string,body:string}> $biography
- * @var array<int,array{title:string,text:string,icon:string}> $credentials
  * @var array<int,string> $languages
  * @var array<int,array<string,mixed>> $testimonials
  */
@@ -83,26 +82,6 @@
                 <a class="btn btn--ghost" href="<?= e(tel_link()) ?>">Call <?= e(format_phone()) ?></a>
             </div>
         </div>
-    </div>
-</section>
-
-<section class="section">
-    <div class="container">
-        <header class="section__head" data-reveal>
-            <p class="eyebrow">Credentials</p>
-            <h2 class="section__title">Registered, licensed and accountable</h2>
-        </header>
-
-        <div class="cards cards--four">
-            <?php foreach ($credentials as $credential): ?>
-            <article class="card card--small" data-reveal>
-                <span class="card__icon card__icon--soft"><?= icon($credential['icon'], 'icon', 22) ?></span>
-                <h3 class="card__title card__title--sm"><?= e($credential['title']) ?></h3>
-                <p class="card__text"><?= e($credential['text']) ?></p>
-            </article>
-            <?php endforeach; ?>
-        </div>
-
     </div>
 </section>
 
