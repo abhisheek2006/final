@@ -24,9 +24,9 @@ final class Doctor
             'role'        => 'Homoeopathic Physician',
             'image'       => '/assets/images/about/doctor-smriti-das.jpg',
             'image_alt'   => 'Photograph of Dr. Smriti Das, Homoeopathic Physician at Swasti Homoeo Clinic, Sri Vijaya Puram',
-            'registration_note' => 'Registered homoeopathic practitioner licensed to practise in '
-                . 'Andaman and Nicobar Islands. Registration particulars are available on request and '
-                . 'are displayed in the clinic.',
+            'registration_note' => 'Registered with the National Commission for Homoeopathy (NCH), '
+                . 'National Register of Homoeopathy (NRH), registration no. NRH/0030897; also '
+                . 'registered under the Central Council of Homoeopathy (CCH), CRH no. 149349.',
             'languages'   => self::languages(),
         ];
     }
