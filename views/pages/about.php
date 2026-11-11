@@ -14,7 +14,7 @@
 <?= component('page-hero', [
     'eyebrow'   => 'About us',
     'heading'   => 'A small clinic that takes its prescribing seriously',
-    'lead'      => \App\Content\Clinic::intro(),
+    'lead'      => '',
     'trail'     => [['name' => 'Home', 'url' => '/'], ['name' => 'About Us']],
 ]) ?>
 
