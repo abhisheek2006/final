@@ -359,6 +359,36 @@
         });
     });
 
+    /* A free-text reason appears only when the patient chooses that option. */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-own-words-select]'), function (select) {
+        var hiddenReason = document.getElementById(select.getAttribute('data-reason-hidden'));
+        var details = document.getElementById(select.getAttribute('data-reason-details'));
+        var wrapper = details ? details.parentElement : null;
+        if (!hiddenReason || !details || !wrapper) {
+            return;
+        }
+
+        var sync = function (focusDetails) {
+            var custom = select.value === '__custom__';
+            wrapper.hidden = !custom;
+            hiddenReason.disabled = custom;
+            details.disabled = !custom;
+            details.required = custom;
+            if (custom) {
+                hiddenReason.value = '';
+                details.dispatchEvent(new Event('input', { bubbles: true }));
+                if (focusDetails) {
+                    details.focus();
+                }
+            } else {
+                hiddenReason.value = select.value;
+            }
+        };
+
+        sync(false);
+        select.addEventListener('change', function () { sync(true); });
+    });
+
     /* Single-select radio chip groups. */
     Array.prototype.forEach.call(document.querySelectorAll('[data-chip-group]'), function (group) {
         var inputs = Array.prototype.slice.call(group.querySelectorAll('[data-chip-input]'));

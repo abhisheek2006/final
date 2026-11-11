@@ -140,6 +140,7 @@ $formLead  = $isFollowUp
                 <h2 class="panel__title panel__title--sm">After you submit</h2>
                 <ul class="check-list check-list--tight">
                     <?php foreach ($afterBooking as $note): ?>
+                        <?php if (!$isFollowUp && str_starts_with($note, 'If you are running a fever on the day,')) { continue; } ?>
                         <li><?= icon('arrow-right', 'icon icon--xs', 14) ?> <?= e($note) ?></li>
                     <?php endforeach; ?>
                 </ul>

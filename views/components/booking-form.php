@@ -108,7 +108,7 @@ $prefix = in_array($formId, ['consultation-form', 'followup-form'], true) ? '' :
 
         <div class="field field--full<?= has_error('preferred_time') ? ' field--error' : '' ?>">
             <span class="field__label" id="<?= $prefix ?>slot-label">Preferred time slot <span class="field__req" aria-hidden="true">*</span></span>
-            <div class="chips" role="radiogroup" aria-labelledby="slot-label" data-chip-group="preferred_time">
+            <div class="chips" role="radiogroup" aria-labelledby="<?= $prefix ?>slot-label" data-chip-group="preferred_time">
                 <?php
                 $selectedSlot = (string) old('preferred_time', $timeSlots[0] ?? '');
                 foreach ($timeSlots as $slot): ?>
@@ -127,23 +127,32 @@ $prefix = in_array($formId, ['consultation-form', 'followup-form'], true) ? '' :
         </div>
 
         <div class="field field--full<?= has_error('reason') ? ' field--error' : '' ?>">
-            <span class="field__label" id="<?= $prefix ?>reason-label">What is the main problem? <span class="field__req" aria-hidden="true">*</span></span>
-            <div class="chips chips--soft" aria-labelledby="reason-label" data-chips="reason-suggestions">
+            <label class="field__label" for="<?= $prefix ?>reason-category">What is the main problem? <span class="field__req" aria-hidden="true">*</span></label>
+            <?php $oldReason = old('reason'); $isCustomReason = $oldReason !== '' && !in_array($oldReason, $reasons, true); ?>
+            <select class="field__input field__input--problem" id="<?= $prefix ?>reason-category"
+                    data-own-words-select data-reason-hidden="<?= $prefix ?>reason-value"
+                    data-reason-details="<?= $prefix ?>reason-details" required>
+                <option value="">Choose a problem</option>
                 <?php foreach ($reasons as $reason): ?>
-                    <button class="chip chip--button" type="button" data-chip-fill="reason" data-chip-value="<?= e($reason) ?>">
-                        <?= e($reason) ?>
-                    </button>
+                    <option value="<?= e($reason) ?>" <?= $oldReason === $reason ? 'selected' : '' ?>><?= e($reason) ?></option>
                 <?php endforeach; ?>
+                <option value="__custom__" <?= $isCustomReason ? 'selected' : '' ?>>In your own words</option>
+            </select>
+            <input type="hidden" id="<?= $prefix ?>reason-value" name="reason"
+                   value="<?= e(in_array($oldReason, $reasons, true) ? $oldReason : '') ?>"
+                   <?= $isCustomReason ? 'disabled' : '' ?>>
+            <div class="field field--full" id="<?= $prefix ?>reason-details-wrap"<?= $isCustomReason ? '' : ' hidden' ?>>
+                <label class="field__label field__label--sub" for="<?= $prefix ?>reason-details">In your own words <span class="field__req" aria-hidden="true">*</span></label>
+                <textarea class="field__input field__textarea" id="<?= $prefix ?>reason-details" name="reason" rows="4"
+                          <?= $isCustomReason ? 'required' : 'disabled' ?> maxlength="1500"
+                          placeholder="Tell us what is troubling you..." data-counter="<?= $prefix ?>reason-counter"
+                          aria-describedby="<?= $prefix ?>reason-help <?= $prefix ?>reason-counter<?= has_error('reason') ? ' ' . $prefix . 'reason-err' : '' ?>"
+                          <?= has_error('reason') ? 'aria-invalid="true"' : '' ?>><?= e($isCustomReason ? $oldReason : '') ?></textarea>
+                <p class="field__meta">
+                    <span class="field__help" id="<?= $prefix ?>reason-help">Where is it, how long has it been there, what makes it better or worse?</span>
+                    <span class="field__count" id="<?= $prefix ?>reason-counter" data-count-for="<?= $prefix ?>reason-details">0 / 1500</span>
+                </p>
             </div>
-            <label class="field__label field__label--sub" for="<?= $prefix ?>reason">In your own words <span class="field__req" aria-hidden="true">*</span></label>
-            <textarea class="field__input field__textarea" id="<?= $prefix ?>reason" name="reason" rows="4" required
-                      maxlength="1500" data-counter="<?= $prefix ?>reason-counter"
-                      aria-describedby="reason-help reason-counter<?= has_error('reason') ? ' reason-err' : '' ?>"
-                      <?= has_error('reason') ? 'aria-invalid="true"' : '' ?>><?= old('reason') ?></textarea>
-            <p class="field__meta">
-                <span class="field__help" id="<?= $prefix ?>reason-help">Where is it, how long has it been there, what makes it better or worse?</span>
-                <span class="field__count" id="<?= $prefix ?>reason-counter" data-count-for="<?= $prefix ?>reason">0 / 1500</span>
-            </p>
             <?php if (has_error('reason')): ?>
                 <p class="field__error" id="<?= $prefix ?>reason-err"><?= e(error_for('reason')) ?></p>
             <?php endif; ?>

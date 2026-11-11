@@ -2075,6 +2075,7 @@ blockquote { margin: 0 0 1em; }
 
 
 .field { display: grid; gap: 7px; min-width: 0; }
+.field[hidden] { display: none !important; }
 
 .field--full { grid-column: 1 / -1; }
 
@@ -2154,6 +2155,12 @@ select.field__input {
 
     background-position: right 14px center;
 
+}
+
+.field__input--problem {
+    background-color: var(--blue-050);
+    border-color: var(--blue-200);
+    font-weight: 600;
 }
 
 

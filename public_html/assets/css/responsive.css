@@ -206,6 +206,10 @@
    SMALL TABLETS
    -------------------------------------------------------------------------- */
 @media (max-width: 900px) {
+    .form--booking .form__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .cards {
         grid-template-columns: minmax(0, 1fr);
     }
