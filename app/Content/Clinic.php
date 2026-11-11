@@ -232,9 +232,12 @@ final class Clinic
      */
     public static function intro(): string
     {
-        return 'Swasti Homoeo Clinic is led by Dr. Smriti Das (BHMS, MD — WBUHS), with over eight '
-            . 'years of clinical experience. We offer careful, individualised care and a clear plan '
-            . 'you can follow.';
+        return 'Swasti Homeo Clinic offers Affordable Homoeopathy Consultation in Port Blair, providing '
+            . 'in-depth case taking, review of previous medical records, and accurate prescriptions '
+            . 'based on classical homeopathic principles. Each consultation includes personalised '
+            . 'guidance on diet and lifestyle, ensuring holistic and long-lasting healing. With '
+            . 'authentic medicines available through the clinic\'s own pharmacy and minimal consultation '
+            . 'fees, patients receive effective, ethical, and budget-friendly care.';
     }
 
     /**

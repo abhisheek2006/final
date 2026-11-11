@@ -118,18 +118,6 @@ $waBooking = whatsapp_link(
                 <?= e(\App\Content\Clinic::intro()) ?>
             </p>
 
-            <ul class="pillars">
-                <?php foreach ($pillars as $pillar): ?>
-                <li class="pillar">
-                    <span class="pillar__icon"><?= icon($pillar['icon'], 'icon', 22) ?></span>
-                    <div>
-                        <h3 class="pillar__title"><?= e($pillar['title']) ?></h3>
-                        <p class="pillar__text"><?= e($pillar['text']) ?></p>
-                    </div>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-
             <div class="split__actions">
                 <a class="btn btn--primary" href="<?= e(url('/about-us')) ?>">Read about the doctor <?= icon('arrow-right', 'icon icon--xs', 16) ?></a>
                 <a class="btn btn--ghost" href="<?= e(url('/book-consultation')) ?>">Book a consultation</a>
