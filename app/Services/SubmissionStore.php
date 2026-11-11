@@ -57,16 +57,17 @@ final class SubmissionStore
     {
         $dir  = Paths::storage() . '/submissions';
         $kind = self::safeKind($kind);
-        $files = [];
-
-        foreach ([$month, date('Y-m')] as $candidate) {
-            if ($candidate === null) {
-                continue;
+        if ($month !== null) {
+            $files = [];
+            foreach ([$month, date('Y-m')] as $candidate) {
+                $file = sprintf('%s/%s-%s.jsonl', $dir, $kind, $candidate);
+                if (is_file($file) && !in_array($file, $files, true)) {
+                    $files[] = $file;
+                }
             }
-            $file = sprintf('%s/%s-%s.jsonl', $dir, $kind, $candidate);
-            if (is_file($file) && !in_array($file, $files, true)) {
-                $files[] = $file;
-            }
+        } else {
+            $files = glob($dir . '/' . $kind . '-????-??.jsonl') ?: [];
+            sort($files, SORT_STRING);
         }
 
         $rows = [];

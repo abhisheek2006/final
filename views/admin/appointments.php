@@ -166,6 +166,12 @@ $withFilter = static function (string $key, string $value, int $page = 1) use ($
                         <span class="<?= e(status_badge($status)) ?>"><?= e(status_label($status)) ?></span>
                     </td>
                     <td class="table__actions" data-label="Actions">
+                        <?php if ($id < 1): ?>
+                            <span class="cell-meta">
+                                <?= ($row['storage_source'] ?? 'file') === 'mongo' ? 'MongoDB backup' : 'Saved locally' ?>
+                                · status changes need MySQL.
+                            </span>
+                        <?php else: ?>
                         <details class="row-menu">
                             <summary class="btn btn--ghost btn--xs" aria-label="Actions for <?= e((string) ($row['full_name'] ?? '')) ?>">
                                 <?= icon('chevron', 'icon icon--xs', 14) ?> Actions
@@ -201,6 +207,7 @@ $withFilter = static function (string $key, string $value, int $page = 1) use ($
                                 </form>
                             </div>
                         </details>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

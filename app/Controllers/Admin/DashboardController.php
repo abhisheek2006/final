@@ -9,6 +9,7 @@ use App\Core\Database;
 use App\Core\Response;
 use App\Models\Appointment;
 use App\Models\Message;
+use App\Services\MongoAppointmentStore;
 use App\Services\SubmissionStore;
 use Throwable;
 
@@ -29,14 +30,16 @@ final class DashboardController extends AdminController
         $fallback = $dbOk
             ? ['appointments' => 0, 'messages' => 0]
             : [
-                'appointments' => SubmissionStore::countRecords('appointments'),
+                'appointments' => Appointment::count(),
                 'messages'     => SubmissionStore::countRecords('messages'),
             ];
 
-        $recent = $dbOk ? Appointment::list([], 6) : [];
+        $recent = Appointment::list([], 6);
 
         $mailer  = new \App\Services\Mailer();
         $envOk   = trim((string) \App\Core\Env::string('APP_KEY', '')) !== '';
+        $mongoConfigured = MongoAppointmentStore::configured();
+        $mongoDriverAvailable = MongoAppointmentStore::driverAvailable();
 
         $inventory = SubmissionStore::inventory();
 
@@ -45,13 +48,15 @@ final class DashboardController extends AdminController
             'clinic'        => Clinic::info(),
             'dbOk'          => $dbOk,
             'dbError'       => $dbOk ? '' : (string) (Database::instance()->lastError() ?? 'Database unavailable'),
-            'statusCounts'  => $dbOk ? Appointment::statusCounts() : array_fill_keys(Appointment::STATUSES, 0),
+            'statusCounts'  => Appointment::statusCounts(),
             'messageCounts' => $dbOk ? Message::counts() : $fallback,
             'recent'        => $recent,
             'fallback'      => $fallback,
             'inventory'     => $inventory,
             'mailReady'     => $mailer->isConfigured(),
             'mailReason'    => $mailer->isConfigured() ? '' : $mailer->reason(),
+            'mongoConfigured' => $mongoConfigured,
+            'mongoDriverAvailable' => $mongoDriverAvailable,
             'appKeySet'     => $envOk,
             'debug'         => Config::debug(),
         ]);

@@ -107,6 +107,8 @@ Config::set('db.username', Env::string('DB_USERNAME', Config::string('db.usernam
 Config::set('db.password', Env::string('DB_PASSWORD', Config::string('db.password', '')));
 Config::set('db.charset', Env::string('DB_CHARSET', Config::string('db.charset', 'utf8mb4')));
 Config::set('db.socket', Env::string('DB_SOCKET', Config::string('db.socket', '')));
+Config::set('mongodb.uri', Env::string('MONGODB_URI', Config::string('mongodb.uri', '')));
+Config::set('mongodb.database', Env::string('MONGODB_DATABASE', Config::string('mongodb.database', 'swasti_homeo')));
 
 $mailHost = Env::string('MAIL_HOST', Config::string('mail.host', ''));
 Config::set('mail.host', $mailHost);

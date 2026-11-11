@@ -12,6 +12,8 @@
  * @var array<int,array{file:string,records:int,size:int,modified:int}> $inventory
  * @var bool $mailReady
  * @var string $mailReason
+ * @var bool $mongoConfigured
+ * @var bool $mongoDriverAvailable
  * @var bool $appKeySet
  * @var bool $debug
  */
@@ -39,9 +41,9 @@ $unread           = (int) ($messageCounts['unread'] ?? 0);
 <div class="flash flash--error" role="alert">
     <span class="flash__icon"><?= icon('alert', 'icon icon--sm', 20) ?></span>
     <div class="flash__body">
-        <p class="flash__text"><strong>The database is not available.</strong> Appointment and message forms are
-        still accepting submissions — they are being written to <code>storage/submissions/</code> instead of
-        MySQL so nothing is lost.</p>
+        <p class="flash__text"><strong>MySQL is not available.</strong> New appointments are saved to MongoDB
+        when its URI and PHP driver are available, otherwise to <code>storage/submissions/</code>. They appear
+        in the appointment list; status changes require MySQL.</p>
         <?php if ($dbError !== ''): ?>
             <p class="flash__meta">Driver message: <?= e(truncate($dbError, 160)) ?></p>
         <?php endif; ?>
@@ -78,7 +80,7 @@ $unread           = (int) ($messageCounts['unread'] ?? 0);
 <?php endif; ?>
 
 <div class="stat-cards">
-    <a class="stat-card" href="<?= e(url('/admin/appointments?status=new')) ?>">
+    <a class="stat-card<?= (int) ($statusCounts['new'] ?? 0) > 0 ? ' stat-card--alert' : '' ?>" href="<?= e(url('/admin/appointments?status=new')) ?>">
         <span class="stat-card__label">New requests</span>
         <span class="stat-card__value"><?= e((string) ($statusCounts['new'] ?? 0)) ?></span>
         <span class="stat-card__meta">Awaiting confirmation</span>
@@ -111,9 +113,7 @@ $unread           = (int) ($messageCounts['unread'] ?? 0);
             <div class="empty">
                 <?= icon('inbox', 'icon', 28) ?>
                 <p class="empty__text">
-                    <?= $dbOk
-                        ? 'No appointment requests have come in yet.'
-                        : 'The database is unavailable, so this list is empty. Check the fallback files below.' ?>
+                    No appointment requests have come in yet.
                 </p>
             </div>
         <?php else: ?>
@@ -164,6 +164,12 @@ $unread           = (int) ($messageCounts['unread'] ?? 0);
             <li>
                 <?= icon($dbOk ? 'check-circle' : 'alert', 'icon icon--sm', 18) ?>
                 <span><strong>MySQL</strong> <?= $dbOk ? 'connected' : 'unavailable — using file fallback' ?></span>
+            </li>
+            <li>
+                <?= icon($mongoConfigured && $mongoDriverAvailable ? 'check-circle' : 'alert', 'icon icon--sm', 18) ?>
+                <span><strong>MongoDB</strong>
+                    <?= !$mongoConfigured ? 'not configured' : ($mongoDriverAvailable ? 'URI and PHP driver configured' : 'PHP mongodb extension is required') ?>
+                </span>
             </li>
             <li>
                 <?= icon($mailReady ? 'check-circle' : 'alert', 'icon icon--sm', 18) ?>
