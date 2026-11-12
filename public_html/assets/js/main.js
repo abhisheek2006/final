@@ -557,6 +557,11 @@
             fetchCsrf(form)
                 .then(function () {
                     payload = new FormData(form);
+                    var phone = form.querySelector('input[name="phone"]');
+                    var countryCode = form.querySelector('select[name="phone_country_code"]');
+                    if (phone && countryCode) {
+                        payload.set('phone', countryCode.value + ' ' + phone.value.trim());
+                    }
 
                     return fetch(form.getAttribute('action') || window.location.pathname, {
                         method: 'POST',
