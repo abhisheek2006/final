@@ -23,9 +23,18 @@ final class Faq
             $rows = array_values(array_filter($rows, static fn (array $r): bool => $r['category'] === $category));
         }
 
+        $hiddenPublicQuestions = [
+            'How do I book a consultation?',
+            'Do I need a confirmed appointment, or can I walk in?',
+            'How long does homoeopathic treatment take to show results?',
+            'How many medicines will I be given?',
+            'Do you offer home visits?',
+        ];
+
         return array_values(array_filter(
             $rows,
             static fn (array $row): bool => strcasecmp(trim((string) ($row['question'] ?? '')), 'Do you accept insurance?') !== 0
+                && !in_array(trim((string) ($row['question'] ?? '')), $hiddenPublicQuestions, true)
         ));
     }
 
