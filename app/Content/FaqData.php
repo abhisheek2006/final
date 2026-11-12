@@ -70,18 +70,6 @@ final class FaqData
             ],
             'Booking and fees' => [
                 [
-                    'q' => 'How do I book a consultation?',
-                    'a' => 'Use the Book Consultation form on this website, call +91 79806 44867, or send '
-                        . 'a WhatsApp message to 91798 0644867 with your preferred day and time. We '
-                        . 'confirm your slot by phone or WhatsApp, usually the same day.',
-                ],
-                [
-                    'q' => 'Do I need a confirmed appointment, or can I walk in?',
-                    'a' => 'A confirmed appointment is strongly recommended because most patients are given '
-                        . 'a fixed slot. If you arrive without a booking we will fit you in at the next '
-                        . 'available gap, but you may have to wait.',
-                ],
-                [
                     'q' => 'What does a consultation cost, and is it inclusive of medicines?',
                     'a' => 'The consultation fee is separate from the cost of the dispensed remedy, and '
                         . 'the remedy cost depends on the potencies and quantities your prescription '
@@ -113,21 +101,6 @@ final class FaqData
                 ],
             ],
             'Treatment and results' => [
-                [
-                    'q' => 'How long does homoeopathic treatment take to show results?',
-                    'a' => 'It depends entirely on the condition. An acute complaint such as a cold or '
-                        . 'acidity flare may improve in a few days. A long-standing condition like chronic '
-                        . 'eczema or a decade of back pain usually needs two to six months of continuous '
-                        . 'treatment, reviewed at fixed intervals. We will give you a realistic timeline at '
-                        . 'your first visit rather than a hopeful one.',
-                ],
-                [
-                    'q' => 'How many medicines will I be given?',
-                    'a' => 'Usually one remedy at a time. Prescribing several remedies together makes it '
-                        . 'impossible to know which one is helping, and classical homoeopathy works on a '
-                        . 'single individualised remedy. Occasionally a second remedy is used for a '
-                        . 'specific intercurrent complaint, and this is always explained.',
-                ],
                 [
                     'q' => 'Can I stop my allopathic medicines once I feel better?',
                     'a' => 'No. Do not stop, reduce or change any prescribed medicine without speaking to '
@@ -199,14 +172,6 @@ final class FaqData
                         . 'crave and what you dread, your menstrual pattern and your family history are all '
                         . 'part of the "totality" the remedy is matched to. That is why the first '
                         . 'consultation takes 30 to 45 minutes while a follow-up takes ten.',
-                ],
-                [
-                    'q' => 'Do you offer home visits?',
-                    'a' => 'Home visits are not part of routine practice because proper prescribing needs '
-                        . 'examination and an undisturbed history. In special circumstances — for '
-                        . 'an elderly or bedridden patient travelling a long distance, for instance — '
-                        . 'contact the clinic and we will discuss what is possible and what the cost would '
-                        . 'be.',
                 ],
             ],
         ];
