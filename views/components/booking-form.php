@@ -12,6 +12,11 @@
  */
 $isFollowUp = $isFollowUp ?? false;
 $formId     = $formId ?? ($isFollowUp ? 'followup-form' : 'consultation-form');
+$countryCode = (string) old_raw('phone_country_code', '+91');
+$oldPhone = (string) old_raw('phone');
+if ($countryCode !== '' && str_starts_with(trim($oldPhone), $countryCode)) {
+    $oldPhone = trim(substr(trim($oldPhone), strlen($countryCode)));
+}
 
 // The booking modal embeds this same partial on pages that already contain a
 // form (the contact page), so the two sets of ids would collide. Only the modal
@@ -48,11 +53,23 @@ $prefix = in_array($formId, ['consultation-form', 'followup-form'], true) ? '' :
 
         <div class="field<?= has_error('phone') ? ' field--error' : '' ?>">
             <label class="field__label" for="<?= $prefix ?>phone">Phone number <span class="field__req" aria-hidden="true">*</span></label>
-            <input class="field__input" type="tel" id="<?= $prefix ?>phone" name="phone" required
-                   autocomplete="tel" maxlength="25" inputmode="tel" placeholder="10-digit mobile number"
-                   value="<?= old('phone') ?>"
+            <div class="phone-input">
+                <select class="field__input phone-input__country" name="phone_country_code" aria-label="Country calling code">
+                    <option value="+91" <?= $countryCode === '+91' ? 'selected' : '' ?>>India (+91)</option>
+                    <option value="+1" <?= $countryCode === '+1' ? 'selected' : '' ?>>US / Canada (+1)</option>
+                    <option value="+44" <?= $countryCode === '+44' ? 'selected' : '' ?>>UK (+44)</option>
+                    <option value="+61" <?= $countryCode === '+61' ? 'selected' : '' ?>>Australia (+61)</option>
+                    <option value="+65" <?= $countryCode === '+65' ? 'selected' : '' ?>>Singapore (+65)</option>
+                    <option value="+971" <?= $countryCode === '+971' ? 'selected' : '' ?>>UAE (+971)</option>
+                    <option value="+880" <?= $countryCode === '+880' ? 'selected' : '' ?>>Bangladesh (+880)</option>
+                    <option value="+977" <?= $countryCode === '+977' ? 'selected' : '' ?>>Nepal (+977)</option>
+                </select>
+                <input class="field__input phone-input__number" type="tel" id="<?= $prefix ?>phone" name="phone" required
+                   autocomplete="tel-national" maxlength="15" inputmode="tel" placeholder="10-digit mobile number"
+                   value="<?= e($oldPhone) ?>"
                    aria-describedby="phone-help<?= has_error('phone') ? ' phone-err' : '' ?>"
                    <?= has_error('phone') ? 'aria-invalid="true"' : '' ?>>
+            </div>
             <p class="field__help" id="<?= $prefix ?>phone-help">We call or WhatsApp this number to confirm your slot.</p>
             <?php if (has_error('phone')): ?>
                 <p class="field__error" id="<?= $prefix ?>phone-err"><?= e(error_for('phone')) ?></p>
@@ -61,17 +78,11 @@ $prefix = in_array($formId, ['consultation-form', 'followup-form'], true) ? '' :
 
         <div class="field<?= has_error('age') ? ' field--error' : '' ?>">
             <label class="field__label" for="<?= $prefix ?>age">Age <span class="field__req" aria-hidden="true">*</span></label>
-            <input class="field__input" type="number" id="<?= $prefix ?>age" name="age" required
-                   min="0" max="130" step="1" inputmode="numeric" placeholder="Years"
+            <input class="field__input" type="text" id="<?= $prefix ?>age" name="age" required
+                   maxlength="3" inputmode="numeric" pattern="[0-9]{1,3}" placeholder="Years"
                    value="<?= old('age') ?>"
-                   list="age-presets"
                    aria-describedby="age-help<?= has_error('age') ? ' age-err' : '' ?>"
                    <?= has_error('age') ? 'aria-invalid="true"' : '' ?>>
-            <datalist id="<?= $prefix ?>age-presets">
-                <option value="1"></option><option value="5"></option><option value="10"></option>
-                <option value="18"></option><option value="35"></option><option value="55"></option>
-                <option value="70"></option>
-            </datalist>
             <p class="field__help" id="<?= $prefix ?>age-help">In years. Helps us choose a safe dose and potency.</p>
             <?php if (has_error('age')): ?>
                 <p class="field__error" id="<?= $prefix ?>age-err"><?= e(error_for('age')) ?></p>
