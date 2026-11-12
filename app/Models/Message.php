@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Core\Database;
+use App\Services\MongoDatabase;
 use App\Services\SubmissionStore;
 use Throwable;
 
@@ -15,7 +15,7 @@ final class Message
 {
     /**
      * @param array<string,mixed> $data
-     * @return array{id:int|null,stored:'db'|'file',error:string}
+     * @return array{id:int|null,stored:'mongo'|'file',error:string}
      */
     public static function create(array $data): array
     {
@@ -34,13 +34,13 @@ final class Message
         ];
 
         try {
-            $id = Database::instance()->insert('messages', $row);
+            $id = MongoDatabase::insert('messages', $row);
 
-            return ['id' => $id, 'stored' => 'db', 'error' => ''];
+            return ['id' => $id, 'stored' => 'mongo', 'error' => ''];
         } catch (Throwable $e) {
-            SubmissionStore::append('messages', $row + ['_error' => $e->getMessage()]);
+            SubmissionStore::append('messages', $row + ['_error' => $e::class]);
 
-            return ['id' => null, 'stored' => 'file', 'error' => $e->getMessage()];
+            return ['id' => null, 'stored' => 'file', 'error' => $e::class];
         }
     }
 
@@ -50,26 +50,35 @@ final class Message
      */
     public static function list(array $filters = [], int $limit = 50, int $offset = 0): array
     {
-        [$where, $params] = self::buildFilters($filters);
-
         try {
-            $sql = 'SELECT * FROM messages' . ($where === '' ? '' : ' WHERE ' . $where)
-                . ' ORDER BY created_at DESC LIMIT :lim OFFSET :off';
-
-            return Database::instance()->select($sql, array_merge($params, [
-                'lim' => max(1, min(500, $limit)),
-                'off' => max(0, $offset),
-            ]));
+            $rows = MongoDatabase::list('messages', self::mongoFilters($filters), ['created_at' => -1]);
         } catch (Throwable) {
-            return [];
+            $rows = [];
         }
+        $known = [];
+        foreach ($rows as $row) {
+            $known[self::identity($row)] = true;
+        }
+        foreach (SubmissionStore::read('messages', 0) as $row) {
+            unset($row['_stored_at'], $row['_error']);
+            $row['id'] = null;
+            $row['storage_source'] = 'file';
+            $identity = self::identity($row);
+            if (!isset($known[$identity]) && self::matchesFilters($row, $filters)) {
+                $rows[] = $row;
+                $known[$identity] = true;
+            }
+        }
+        usort($rows, static fn (array $a, array $b): int => strcmp((string) ($b['created_at'] ?? ''), (string) ($a['created_at'] ?? '')));
+
+        return array_slice($rows, max(0, $offset), max(1, min(500, $limit)));
     }
 
     /** @return array<string,mixed>|null */
     public static function find(int $id): ?array
     {
         try {
-            return Database::instance()->first('SELECT * FROM messages WHERE id = :id', ['id' => $id]);
+            return MongoDatabase::findById('messages', $id);
         } catch (Throwable) {
             return null;
         }
@@ -78,9 +87,7 @@ final class Message
     public static function markRead(int $id): bool
     {
         try {
-            Database::instance()->update('messages', ['status' => 'read', 'updated_at' => date('Y-m-d H:i:s')], 'id = :id', ['id' => $id]);
-
-            return true;
+            return MongoDatabase::updateOne('messages', ['id' => $id], ['status' => 'read', 'updated_at' => date('Y-m-d H:i:s')]);
         } catch (Throwable) {
             return false;
         }
@@ -89,7 +96,7 @@ final class Message
     public static function delete(int $id): bool
     {
         try {
-            return Database::instance()->delete('messages', 'id = :id', ['id' => $id]) > 0;
+            return MongoDatabase::deleteOne('messages', ['id' => $id]);
         } catch (Throwable) {
             return false;
         }
@@ -99,34 +106,62 @@ final class Message
     public static function counts(): array
     {
         try {
-            $db    = Database::instance();
-            $total = (int) $db->value('SELECT COUNT(*) FROM messages');
-            $unread = (int) $db->value("SELECT COUNT(*) FROM messages WHERE status = 'unread'");
-
-            return ['unread' => $unread, 'total' => $total];
+            $rows = MongoDatabase::list('messages', []);
         } catch (Throwable) {
-            return ['unread' => 0, 'total' => 0];
+            $rows = [];
         }
+        $known = [];
+        foreach ($rows as $row) {
+            $known[self::identity($row)] = true;
+        }
+        foreach (SubmissionStore::read('messages', 0) as $row) {
+            $identity = self::identity($row);
+            if (!isset($known[$identity])) {
+                $rows[] = $row;
+                $known[$identity] = true;
+            }
+        }
+        $total = count($rows);
+        $unread = count(array_filter($rows, static fn (array $row): bool => (string) ($row['status'] ?? 'unread') === 'unread'));
+
+        return ['unread' => $unread, 'total' => $total];
     }
 
-    /**
-     * @param array<string,mixed> $filters
-     * @return array{0:string,1:array<string,mixed>}
-     */
-    private static function buildFilters(array $filters): array
+    /** @param array<string,mixed> $filters @return array<string,mixed> */
+    private static function mongoFilters(array $filters): array
     {
-        $clauses = [];
-        $params  = [];
-
         if (!empty($filters['status']) && in_array($filters['status'], ['unread', 'read', 'archived'], true)) {
-            $clauses[] = 'status = :status';
-            $params['status'] = $filters['status'];
+            $query['status'] = $filters['status'];
         }
         if (!empty($filters['q'])) {
-            $clauses[] = '(name LIKE :q OR email LIKE :q OR phone LIKE :q OR subject LIKE :q OR message LIKE :q)';
-            $params['q'] = '%' . str_replace(['%', '_'], ['\%', '\_'], (string) $filters['q']) . '%';
+            $regex = ['$regex' => preg_quote((string) $filters['q'], '/'), '$options' => 'i'];
+            $query['$or'] = array_map(static fn (string $field): array => [$field => $regex], ['name', 'email', 'phone', 'subject', 'message']);
         }
 
-        return [implode(' AND ', $clauses), $params];
+        return $query ?? [];
+    }
+
+    /** @param array<string,mixed> $row @param array<string,mixed> $filters */
+    private static function matchesFilters(array $row, array $filters): bool
+    {
+        if (!empty($filters['status']) && (string) ($row['status'] ?? 'unread') !== (string) $filters['status']) {
+            return false;
+        }
+        if (!empty($filters['q'])) {
+            $haystack = mb_strtolower(implode(' ', array_map(static fn (string $field): string => (string) ($row[$field] ?? ''), ['name', 'email', 'phone', 'subject', 'message'])));
+
+            return str_contains($haystack, mb_strtolower((string) $filters['q']));
+        }
+
+        return true;
+    }
+
+    /** @param array<string,mixed> $row */
+    private static function identity(array $row): string
+    {
+        return hash('sha256', implode("\0", array_map(
+            static fn (string $field): string => (string) ($row[$field] ?? ''),
+            ['name', 'phone', 'email', 'subject', 'message', 'created_at']
+        )));
     }
 }

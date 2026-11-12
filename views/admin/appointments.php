@@ -169,7 +169,7 @@ $withFilter = static function (string $key, string $value, int $page = 1) use ($
                         <?php if ($id < 1): ?>
                             <span class="cell-meta">
                                 <?= ($row['storage_source'] ?? 'file') === 'mongo' ? 'MongoDB backup' : 'Saved locally' ?>
-                                · status changes need MySQL.
+                                · status changes need MongoDB.
                             </span>
                         <?php else: ?>
                         <details class="row-menu">

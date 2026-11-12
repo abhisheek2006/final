@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Content\FaqData;
-use App\Core\Database;
+use App\Services\MongoDatabase;
 use Throwable;
 
 /**
@@ -18,38 +18,15 @@ final class Faq
      */
     public static function published(?string $category = null): array
     {
-        try {
-            $db    = Database::instance();
-            $params = [];
-            $where  = 'is_published = 1';
-
-            if ($category !== null && $category !== '') {
-                $where .= ' AND category = :category';
-                $params['category'] = $category;
-            }
-
-            $rows = $db->select(
-                'SELECT id, question, answer, category, sort_order, is_published, created_at, updated_at
-                 FROM faqs WHERE ' . $where . ' ORDER BY sort_order ASC, id ASC',
-                $params
-            );
-
-            if ($rows !== []) {
-                return array_values(array_filter(
-                    $rows,
-                    static fn (array $row): bool => strcasecmp(trim((string) ($row['question'] ?? '')), 'Do you accept insurance?') !== 0
-                ));
-            }
-        } catch (Throwable) {
-            // Fall through to bundled content.
-        }
-
-        $rows = FaqData::all();
+        $rows = array_values(array_filter(self::all(), static fn (array $row): bool => (int) ($row['is_published'] ?? 1) === 1));
         if ($category !== null && $category !== '') {
             $rows = array_values(array_filter($rows, static fn (array $r): bool => $r['category'] === $category));
         }
 
-        return $rows;
+        return array_values(array_filter(
+            $rows,
+            static fn (array $row): bool => strcasecmp(trim((string) ($row['question'] ?? '')), 'Do you accept insurance?') !== 0
+        ));
     }
 
     /**
@@ -93,7 +70,21 @@ final class Faq
     public static function all(): array
     {
         try {
-            return Database::instance()->select('SELECT * FROM faqs ORDER BY category ASC, sort_order ASC, id ASC');
+            $rows = MongoDatabase::list('faqs', [], ['category' => 1, 'sort_order' => 1, 'id' => 1]);
+            if ($rows !== []) {
+                return $rows;
+            }
+
+            if (MongoDatabase::findOne('settings', ['key' => 'faqs_seeded']) === null) {
+                foreach (FaqData::all() as $row) {
+                    self::create($row);
+                }
+                MongoDatabase::insert('settings', ['key' => 'faqs_seeded', 'created_at' => date('Y-m-d H:i:s')]);
+
+                return MongoDatabase::list('faqs', [], ['category' => 1, 'sort_order' => 1, 'id' => 1]);
+            }
+
+            return [];
         } catch (Throwable) {
             return FaqData::all();
         }
@@ -103,7 +94,7 @@ final class Faq
     public static function find(int $id): ?array
     {
         try {
-            return Database::instance()->first('SELECT * FROM faqs WHERE id = :id', ['id' => $id]);
+            return MongoDatabase::findById('faqs', $id);
         } catch (Throwable) {
             return null;
         }
@@ -112,7 +103,7 @@ final class Faq
     /** @param array<string,mixed> $data */
     public static function create(array $data): int
     {
-        return Database::instance()->insert('faqs', [
+        return MongoDatabase::insert('faqs', [
             'question'     => $data['question'],
             'answer'       => $data['answer'],
             'category'     => $data['category'] ?? 'General',
@@ -126,25 +117,25 @@ final class Faq
     /** @param array<string,mixed> $data */
     public static function update(int $id, array $data): int
     {
-        return Database::instance()->update('faqs', [
+        return MongoDatabase::updateOne('faqs', ['id' => $id], [
             'question'     => $data['question'],
             'answer'       => $data['answer'],
             'category'     => $data['category'] ?? 'General',
             'sort_order'   => (int) ($data['sort_order'] ?? 0),
             'is_published' => (int) ($data['is_published'] ?? 1),
             'updated_at'   => date('Y-m-d H:i:s'),
-        ], 'id = :id', ['id' => $id]);
+        ]) ? 1 : 0;
     }
 
     public static function delete(int $id): int
     {
-        return Database::instance()->delete('faqs', 'id = :id', ['id' => $id]);
+        return MongoDatabase::deleteOne('faqs', ['id' => $id]) ? 1 : 0;
     }
 
     public static function countAll(): int
     {
         try {
-            return (int) Database::instance()->value('SELECT COUNT(*) FROM faqs');
+            return MongoDatabase::count('faqs');
         } catch (Throwable) {
             return count(FaqData::all());
         }

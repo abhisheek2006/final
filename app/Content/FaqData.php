@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace App\Content;
 
 /**
- * Default FAQ set. These rows are also written to the `faqs` table by
- * database/seed.sql so they can be edited from /admin/faqs.
+ * Default FAQ set. These rows are seeded into MongoDB on the first admin or
+ * public FAQ read so they can be edited from /admin/faqs.
  */
 final class FaqData
 {

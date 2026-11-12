@@ -44,17 +44,6 @@ return [
         'public'    => null,
     ],
 
-    'db' => [
-        'host'     => 'localhost',
-        'port'     => 3306,
-        'database' => '',
-        'username' => '',
-        'password' => '',
-        'charset'  => 'utf8mb4',
-        'collation'=> 'utf8mb4_unicode_ci',
-        'socket'   => '',
-    ],
-
     'mail' => [
         'enabled'     => false,   // becomes true as soon as MAIL_HOST is set
         'transport'   => 'smtp',  // smtp

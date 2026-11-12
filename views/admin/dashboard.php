@@ -41,9 +41,9 @@ $unread           = (int) ($messageCounts['unread'] ?? 0);
 <div class="flash flash--error" role="alert">
     <span class="flash__icon"><?= icon('alert', 'icon icon--sm', 20) ?></span>
     <div class="flash__body">
-        <p class="flash__text"><strong>MySQL is not available.</strong> New appointments are saved to MongoDB
-        when its URI and PHP driver are available, otherwise to <code>storage/submissions/</code>. They appear
-        in the appointment list; status changes require MySQL.</p>
+        <p class="flash__text"><strong>MongoDB is not available.</strong> New appointments and messages are
+        saved to <code>storage/submissions/</code> until MongoDB connects. They appear in the admin lists;
+        record edits require MongoDB.</p>
         <?php if ($dbError !== ''): ?>
             <p class="flash__meta">Driver message: <?= e(truncate($dbError, 160)) ?></p>
         <?php endif; ?>
@@ -163,12 +163,8 @@ $unread           = (int) ($messageCounts['unread'] ?? 0);
         <ul class="check-list check-list--status">
             <li>
                 <?= icon($dbOk ? 'check-circle' : 'alert', 'icon icon--sm', 18) ?>
-                <span><strong>MySQL</strong> <?= $dbOk ? 'connected' : 'unavailable — using file fallback' ?></span>
-            </li>
-            <li>
-                <?= icon($mongoConfigured && $mongoDriverAvailable ? 'check-circle' : 'alert', 'icon icon--sm', 18) ?>
                 <span><strong>MongoDB</strong>
-                    <?= !$mongoConfigured ? 'not configured' : ($mongoDriverAvailable ? 'URI and PHP driver configured' : 'PHP mongodb extension is required') ?>
+                    <?= $dbOk ? 'connected' : (!$mongoConfigured ? 'URI not configured' : (!$mongoDriverAvailable ? 'PHP mongodb extension is required' : 'unavailable — using file fallback')) ?>
                 </span>
             </li>
             <li>
@@ -199,8 +195,8 @@ $unread           = (int) ($messageCounts['unread'] ?? 0);
                 </p>
             <?php else: ?>
                 <p class="muted">
-                    These records were written to <code>storage/submissions/</code> because MySQL was
-                    unavailable. Import them once the database is working.
+                    These records were written to <code>storage/submissions/</code> because MongoDB was
+                    unavailable. Import them once MongoDB is working.
                 </p>
                 <ul class="file-list">
                     <?php foreach ($inventory as $file): ?>

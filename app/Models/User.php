@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Core\Config;
-use App\Core\Database;
 use App\Core\Logger;
 use App\Core\Session;
+use App\Services\MongoDatabase;
 use Throwable;
 
 /**
@@ -49,10 +49,10 @@ final class User
         // Transparently upgrade the hash when PHP's default algorithm changes.
         if (password_needs_rehash((string) $record['password_hash'], PASSWORD_DEFAULT)) {
             try {
-                Database::instance()->update('users', [
+                MongoDatabase::updateOne('users', ['id' => (int) $record['id']], [
                     'password_hash' => password_hash($password, PASSWORD_DEFAULT),
                     'updated_at'    => date('Y-m-d H:i:s'),
-                ], 'id = :id', ['id' => (int) $record['id']]);
+                ]);
             } catch (Throwable) {
                 // Non-fatal.
             }
@@ -92,10 +92,7 @@ final class User
 
         // 2. The seeded database user.
         try {
-            return Database::instance()->first(
-                'SELECT * FROM users WHERE email = :email LIMIT 1',
-                ['email' => $email]
-            );
+            return MongoDatabase::findOne('users', ['email' => $email]);
         } catch (Throwable) {
             return null;
         }
@@ -111,10 +108,11 @@ final class User
         Session::set('_admin_login_at', time());
         Session::set('_admin_last_seen', time());
         Session::forget('_admin_attempts_' . self::attemptKey());
+        Session::forget('_admin_attempt_start_' . self::attemptKey());
 
         try {
             if (($user['id'] ?? 0) > 0) {
-                Database::instance()->update('users', ['last_login_at' => date('Y-m-d H:i:s')], 'id = :id', ['id' => (int) $user['id']]);
+                MongoDatabase::updateOne('users', ['id' => (int) $user['id']], ['last_login_at' => date('Y-m-d H:i:s')]);
             }
         } catch (Throwable) {
             // Login must succeed even if the audit write fails.
@@ -177,27 +175,12 @@ final class User
         $key = self::attemptKey();
 
         try {
-            $db    = Database::instance();
-            $pdo   = $db->pdo();
-            $stmt  = $pdo->prepare('SELECT hits, window_start FROM rate_limits WHERE bucket_key = :k LIMIT 1');
-            $stmt->execute(['k' => $key]);
-            $row = $stmt->fetch();
-
-            $now = time();
-            if ($row === false || ($now - (int) $row['window_start']) > 900) {
-                $pdo->prepare('DELETE FROM rate_limits WHERE bucket_key = :k')->execute(['k' => $key]);
-                $pdo->prepare('INSERT INTO rate_limits (bucket_key, hits, window_start, updated_at) VALUES (:k, 1, :w, :u)')
-                    ->execute(['k' => $key, 'w' => $now, 'u' => date('Y-m-d H:i:s', $now)]);
-
-                return;
-            }
-
-            $pdo->prepare('UPDATE rate_limits SET hits = hits + 1, updated_at = :u WHERE bucket_key = :k')
-                ->execute(['k' => $key, 'u' => date('Y-m-d H:i:s', $now)]);
+            MongoDatabase::rateLimitHit($key, PHP_INT_MAX, 900, time());
         } catch (Throwable) {
             $sessionKey = '_admin_attempts_' . $key;
             $attempts   = (int) Session::get($sessionKey, 0);
             Session::set($sessionKey, $attempts + 1);
+            Session::set('_admin_attempt_start_' . $key, (int) Session::get('_admin_attempt_start_' . $key, time()));
         }
 
         Logger::warning('auth.failed', 'Failed administrator sign-in', ['email' => $email]);
@@ -206,11 +189,9 @@ final class User
     public static function attempts(): int
     {
         try {
-            $stmt = Database::instance()->pdo();
-            $stmt->prepare('SELECT hits FROM rate_limits WHERE bucket_key = :k')->execute(['k' => self::attemptKey()]);
-            $row = $stmt->fetch();
+            $row = MongoDatabase::findOne('rate_limits', ['_id' => self::attemptKey()]);
 
-            return $row === false ? (int) Session::get('_admin_attempts_' . self::attemptKey(), 0) : (int) $row['hits'];
+            return $row === null ? (int) Session::get('_admin_attempts_' . self::attemptKey(), 0) : (int) ($row['hits'] ?? 0);
         } catch (Throwable) {
             return (int) Session::get('_admin_attempts_' . self::attemptKey(), 0);
         }
@@ -227,18 +208,16 @@ final class User
     private static function lastAttemptAt(): int
     {
         try {
-            $stmt = Database::instance()->pdo();
-            $stmt->prepare('SELECT window_start FROM rate_limits WHERE bucket_key = :k')->execute(['k' => self::attemptKey()]);
-            $row = $stmt->fetch();
+            $row = MongoDatabase::findOne('rate_limits', ['_id' => self::attemptKey()]);
 
-            if ($row !== false) {
-                return (int) $row['window_start'];
+            if ($row !== null) {
+                return (int) ($row['window_start'] ?? 0);
             }
         } catch (Throwable) {
             // ignore
         }
 
-        return 0;
+        return (int) Session::get('_admin_attempt_start_' . self::attemptKey(), 0);
     }
 
     private static function attemptKey(): string

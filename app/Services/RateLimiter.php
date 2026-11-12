@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Core\Config;
-use App\Core\Database;
 use App\Core\Paths;
 use App\Core\Session;
 use Throwable;
@@ -12,7 +11,7 @@ use Throwable;
 /**
  * Fixed-window rate limiter.
  *
- * Uses the `rate_limits` table when MySQL is reachable and falls back to a
+ * Uses the MongoDB `rate_limits` collection when reachable and falls back to a
  * small JSON file in storage/logs otherwise, so the site still throttles
  * properly during a database outage.
  */
@@ -35,42 +34,7 @@ final class RateLimiter
         $now        = time();
 
         try {
-            $db   = Database::instance();
-            $pdo  = $db->pdo();
-            $stmt = $pdo->prepare('SELECT hits, window_start FROM rate_limits WHERE bucket_key = :k LIMIT 1');
-            $stmt->execute(['k' => $identifier]);
-            $row = $stmt->fetch();
-
-            if ($row === false) {
-                $insert = $pdo->prepare(
-                    'INSERT INTO rate_limits (bucket_key, hits, window_start, updated_at) VALUES (:k, 1, :w, :u)'
-                );
-                $insert->execute(['k' => $identifier, 'w' => $now, 'u' => date('Y-m-d H:i:s', $now)]);
-
-                return true;
-            }
-
-            $hits     = (int) $row['hits'];
-            $start    = (int) $row['window_start'];
-            $elapsed  = $now - $start;
-
-            if ($elapsed >= $window) {
-                $reset = $pdo->prepare(
-                    'UPDATE rate_limits SET hits = 1, window_start = :w, updated_at = :u WHERE bucket_key = :k'
-                );
-                $reset->execute(['k' => $identifier, 'w' => $now, 'u' => date('Y-m-d H:i:s', $now)]);
-
-                return true;
-            }
-
-            if ($hits >= $max) {
-                return false;
-            }
-
-            $bump = $pdo->prepare('UPDATE rate_limits SET hits = hits + 1, updated_at = :u WHERE bucket_key = :k');
-            $bump->execute(['k' => $identifier, 'u' => date('Y-m-d H:i:s', $now)]);
-
-            return true;
+            return MongoDatabase::rateLimitHit($identifier, $max, $window, $now);
         } catch (Throwable) {
             return self::attemptFile($identifier, $max, $window, $now);
         }
@@ -85,6 +49,18 @@ final class RateLimiter
         $window   = $window ?? (int) ($limits['window'] ?? 3600);
         $file     = self::filePath();
         $key      = self::fingerprint($bucket, $identifier);
+
+        try {
+            $entry = MongoDatabase::findOne('rate_limits', ['_id' => $key]);
+            if ($entry !== null) {
+                $elapsed = time() - (int) ($entry['window_start'] ?? 0);
+                if ($elapsed < $window) {
+                    return max(1, $window - $elapsed);
+                }
+            }
+        } catch (Throwable) {
+            // Use the local fallback below.
+        }
 
         if (is_file($file)) {
             $data = json_decode((string) @file_get_contents($file), true);
@@ -102,10 +78,7 @@ final class RateLimiter
     public static function clear(string $bucket, string $identifier): void
     {
         try {
-            Database::instance()->run(
-                'DELETE FROM rate_limits WHERE bucket_key = :k',
-                ['k' => self::fingerprint($bucket, $identifier)]
-            );
+            MongoDatabase::clearRateLimit(self::fingerprint($bucket, $identifier));
 
             return;
         } catch (Throwable) {

@@ -3,14 +3,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Core\Database;
-use App\Services\MongoAppointmentStore;
+use App\Services\MongoDatabase;
 use App\Services\SubmissionStore;
 use Throwable;
 
 /**
  * Appointment persistence. Falls back to storage/submissions JSONL whenever
- * MySQL is unavailable, so a patient request is never lost.
+ * MongoDB is unavailable, so a patient request is never lost.
  */
 final class Appointment
 {
@@ -26,7 +25,7 @@ final class Appointment
 
     /**
      * @param array<string,mixed> $data
-     * @return array{id:int|null,reference:string,stored:'db'|'mongo'|'file',error:string}
+     * @return array{id:int|null,reference:string,stored:'mongo'|'file',error:string}
      */
     public static function create(array $data): array
     {
@@ -58,25 +57,11 @@ final class Appointment
         ];
 
         try {
-            $id = Database::instance()->insert('appointments', $row);
+            $id = MongoDatabase::insert('appointments', $row);
 
-            if (MongoAppointmentStore::configured() && !MongoAppointmentStore::create($row, 'mirror')) {
-                // MySQL remains the primary store; an unavailable mirror must not lose a booking.
-                \App\Core\Logger::warning('appointment.mongo_mirror', 'Appointment saved to MySQL but not mirrored to MongoDB');
-            }
-
-            return ['id' => $id, 'reference' => (string) $row['reference_code'], 'stored' => 'db', 'error' => ''];
+            return ['id' => $id, 'reference' => (string) $row['reference_code'], 'stored' => 'mongo', 'error' => ''];
         } catch (Throwable $e) {
-            if (MongoAppointmentStore::create($row, 'failover')) {
-                return [
-                    'id'        => null,
-                    'reference' => (string) $row['reference_code'],
-                    'stored'    => 'mongo',
-                    'error'     => '',
-                ];
-            }
-
-            $storedFile = SubmissionStore::append('appointments', $row);
+            $storedFile = SubmissionStore::append('appointments', $row + ['_error' => $e::class]);
             if ($storedFile === '') {
                 throw new \RuntimeException('Appointment could not be saved to any configured store.', 0, $e);
             }
@@ -85,7 +70,7 @@ final class Appointment
                 'id'        => null,
                 'reference' => (string) $row['reference_code'],
                 'stored'    => 'file',
-                'error'     => $e->getMessage(),
+                'error'     => $e::class,
             ];
         }
     }
@@ -96,48 +81,21 @@ final class Appointment
      */
     public static function list(array $filters = [], int $limit = 50, int $offset = 0): array
     {
-        [$where, $params] = self::buildFilters($filters);
-
         try {
-            $sql = 'SELECT * FROM appointments' . ($where === '' ? '' : ' WHERE ' . $where)
-                . ' ORDER BY created_at DESC LIMIT :lim OFFSET :off';
-
-            $dbRows = Database::instance()->select($sql, array_merge($params, [
-                'lim' => 500,
-                'off' => 0,
-            ]));
-
-            // Requests accepted during a database outage remain visible after MySQL recovers.
-            $fallback = self::fallbackRows($filters, 0, 0, false);
-            $known = array_fill_keys(array_map(
-                static fn (array $row): string => (string) ($row['reference_code'] ?? ''),
-                $dbRows
-            ), true);
-            foreach ($fallback as $row) {
-                $reference = (string) ($row['reference_code'] ?? '');
-                if ($reference === '' || !isset($known[$reference])) {
-                    $dbRows[] = $row;
-                    if ($reference !== '') {
-                        $known[$reference] = true;
-                    }
-                }
-            }
-            usort($dbRows, static fn (array $a, array $b): int => strcmp(
-                (string) ($b['created_at'] ?? ''),
-                (string) ($a['created_at'] ?? '')
-            ));
-
-            return array_slice($dbRows, max(0, $offset), max(1, min(500, $limit)));
+            $rows = MongoDatabase::list('appointments', self::mongoFilters($filters));
         } catch (Throwable) {
-            return self::fallbackRows($filters, $limit, $offset);
+            $rows = [];
         }
+
+        $rows = self::mergeFallbackRows($rows, $filters);
+        return array_slice($rows, max(0, $offset), max(1, min(500, $limit)));
     }
 
     /** @return array<string,mixed>|null */
     public static function find(int $id): ?array
     {
         try {
-            return Database::instance()->first('SELECT * FROM appointments WHERE id = :id', ['id' => $id]);
+            return MongoDatabase::findById('appointments', $id);
         } catch (Throwable) {
             return null;
         }
@@ -147,10 +105,7 @@ final class Appointment
     public static function findByReference(string $reference): ?array
     {
         try {
-            return Database::instance()->first(
-                'SELECT * FROM appointments WHERE reference_code = :r LIMIT 1',
-                ['r' => $reference]
-            );
+            return MongoDatabase::findOne('appointments', ['reference_code' => $reference]);
         } catch (Throwable) {
             return null;
         }
@@ -168,7 +123,7 @@ final class Appointment
                 $data['admin_note'] = mb_substr(trim($note), 0, 1000);
             }
 
-            return Database::instance()->update('appointments', $data, 'id = :id', ['id' => $id]) >= 0;
+            return MongoDatabase::updateOne('appointments', ['id' => $id], $data);
         } catch (Throwable) {
             return false;
         }
@@ -177,7 +132,7 @@ final class Appointment
     public static function delete(int $id): bool
     {
         try {
-            return Database::instance()->delete('appointments', 'id = :id', ['id' => $id]) > 0;
+            return MongoDatabase::deleteOne('appointments', ['id' => $id]);
         } catch (Throwable) {
             return false;
         }
@@ -189,43 +144,14 @@ final class Appointment
         $counts = array_fill_keys(self::STATUSES, 0);
 
         try {
-            $rows = Database::instance()->select('SELECT status, COUNT(*) AS total FROM appointments GROUP BY status');
-            foreach ($rows as $row) {
-                $status = (string) $row['status'];
-                if (isset($counts[$status])) {
-                    $counts[$status] = (int) $row['total'];
-                }
-            }
-
-            $seen = [];
-            $db = Database::instance();
-            foreach (self::fallbackRows([], 0, 0, false) as $row) {
-                $reference = (string) ($row['reference_code'] ?? '');
-                if ($reference !== '' && isset($seen[$reference])) {
-                    continue;
-                }
-                if ($reference !== '' && $db->value(
-                    'SELECT 1 FROM appointments WHERE reference_code = :reference LIMIT 1',
-                    ['reference' => $reference]
-                ) !== null) {
-                    $seen[$reference] = true;
-                    continue;
-                }
-
-                $status = (string) ($row['status'] ?? 'new');
-                if (isset($counts[$status])) {
-                    $counts[$status]++;
-                }
-                if ($reference !== '') {
-                    $seen[$reference] = true;
-                }
-            }
+            $rows = MongoDatabase::list('appointments', [], ['created_at' => -1]);
         } catch (Throwable) {
-            foreach (self::fallbackRows([], 0, 0, true) as $row) {
-                $status = (string) ($row['status'] ?? 'new');
-                if (isset($counts[$status])) {
-                    $counts[$status]++;
-                }
+            $rows = [];
+        }
+        foreach (self::mergeFallbackRows($rows, []) as $row) {
+            $status = (string) ($row['status'] ?? 'new');
+            if (isset($counts[$status])) {
+                $counts[$status]++;
             }
         }
 
@@ -235,133 +161,105 @@ final class Appointment
     /** @param array<string,mixed> $filters */
     public static function count(array $filters = []): int
     {
-        [$where, $params] = self::buildFilters($filters);
-
         try {
-            $sql = 'SELECT COUNT(*) FROM appointments' . ($where === '' ? '' : ' WHERE ' . $where);
-
-            $dbCount = (int) Database::instance()->value($sql, $params);
-            $fallback = self::fallbackRows($filters, 0, 0, false);
-            $seen = [];
-            foreach ($fallback as $row) {
-                $reference = (string) ($row['reference_code'] ?? '');
-                if ($reference === '' || isset($seen[$reference])) {
-                    continue;
-                }
-                $exists = Database::instance()->value(
-                    'SELECT 1 FROM appointments WHERE reference_code = :reference LIMIT 1',
-                    ['reference' => $reference]
-                );
-                if ($exists === null) {
-                    $dbCount++;
-                }
-                $seen[$reference] = true;
-            }
-
-            return $dbCount;
+            $rows = MongoDatabase::list('appointments', self::mongoFilters($filters));
         } catch (Throwable) {
-            return count(self::fallbackRows($filters, 0, 0));
+            $rows = [];
         }
+        return count(self::mergeFallbackRows($rows, $filters));
     }
 
-    /**
-     * Read requests saved to JSONL while MySQL was unavailable.
-     * These are visible in the admin list, but have no database ID for status actions.
-     *
-     * @param array<string,mixed> $filters
-     * @return array<int,array<string,mixed>>
-     */
-    private static function fallbackRows(
-        array $filters,
-        int $limit,
-        int $offset,
-        bool $includeMirrors = true
-    ): array
+    /** @param array<string,mixed> $filters @return array<string,mixed> */
+    private static function mongoFilters(array $filters): array
     {
-        $rows = array_merge(
-            MongoAppointmentStore::list($filters, 0, 0, $includeMirrors),
-            SubmissionStore::read('appointments', 0)
-        );
-        $rows = array_map(static function (array $row): array {
+        $mongo = [];
+        foreach (['status', 'type'] as $key) {
+            if (!empty($filters[$key])) {
+                $mongo[$key] = (string) $filters[$key];
+            }
+        }
+        $date = [];
+        if (!empty($filters['from'])) {
+            $date['$gte'] = (string) $filters['from'] . ' 00:00:00';
+        }
+        if (!empty($filters['to'])) {
+            $date['$lte'] = (string) $filters['to'] . ' 23:59:59';
+        }
+        if ($date !== []) {
+            $mongo['created_at'] = $date;
+        }
+        if (!empty($filters['q'])) {
+            $regex = ['$regex' => preg_quote((string) $filters['q'], '/'), '$options' => 'i'];
+            $mongo['$or'] = array_map(static fn (string $field): array => [$field => $regex], [
+                'full_name', 'phone', 'email', 'reference_code',
+            ]);
+        }
+
+        return $mongo;
+    }
+
+    /** @param array<int,array<string,mixed>> $rows @param array<string,mixed> $filters @return array<int,array<string,mixed>> */
+    private static function mergeFallbackRows(array $rows, array $filters): array
+    {
+        try {
+            $fallback = SubmissionStore::read('appointments', 0);
+        } catch (Throwable) {
+            $fallback = [];
+        }
+        $known = [];
+        foreach ($rows as $row) {
+            if (isset($row['reference_code'])) {
+                $known[(string) $row['reference_code']] = true;
+            }
+        }
+        foreach ($fallback as $row) {
+            $reference = (string) ($row['reference_code'] ?? '');
+            if ($reference !== '' && isset($known[$reference])) {
+                continue;
+            }
+            if ($reference !== '') {
+                $known[$reference] = true;
+            }
             unset($row['_stored_at'], $row['_error']);
             $row['id'] = null;
             $row['status'] = (string) ($row['status'] ?? 'new');
-            $row['created_at'] = (string) ($row['created_at'] ?? '');
-            $row['storage_source'] = (string) ($row['storage_source'] ?? 'file');
-
-            return $row;
-        }, $rows);
-
-        $rows = array_values(array_filter($rows, static function (array $row) use ($filters): bool {
-            foreach (['status', 'type'] as $key) {
-                if (!empty($filters[$key]) && (string) ($row[$key] ?? '') !== (string) $filters[$key]) {
-                    return false;
-                }
+            $row['storage_source'] = 'file';
+            if (self::matchesFilters($row, $filters)) {
+                $rows[] = $row;
             }
-
-            if (!empty($filters['q'])) {
-                $needle = mb_strtolower((string) $filters['q']);
-                $haystack = mb_strtolower(implode(' ', [
-                    (string) ($row['full_name'] ?? ''),
-                    (string) ($row['phone'] ?? ''),
-                    (string) ($row['email'] ?? ''),
-                    (string) ($row['reference_code'] ?? ''),
-                ]));
-                if (!str_contains($haystack, $needle)) {
-                    return false;
-                }
-            }
-
-            $created = substr((string) ($row['created_at'] ?? ''), 0, 10);
-            if (!empty($filters['from']) && $created < (string) $filters['from']) {
-                return false;
-            }
-            if (!empty($filters['to']) && $created > (string) $filters['to']) {
-                return false;
-            }
-
-            return true;
-        }));
-
+        }
+        foreach ($rows as &$row) {
+            $row['storage_source'] = (string) ($row['storage_source'] ?? 'mongo');
+        }
+        unset($row);
         usort($rows, static fn (array $a, array $b): int => strcmp(
             (string) ($b['created_at'] ?? ''),
             (string) ($a['created_at'] ?? '')
         ));
 
-        return $limit > 0 ? array_slice($rows, max(0, $offset), $limit) : array_slice($rows, max(0, $offset));
+        return $rows;
     }
 
-    /**
-     * @param array<string,mixed> $filters
-     * @return array{0:string,1:array<string,mixed>}
-     */
-    private static function buildFilters(array $filters): array
+    /** @param array<string,mixed> $row @param array<string,mixed> $filters */
+    private static function matchesFilters(array $row, array $filters): bool
     {
-        $clauses = [];
-        $params  = [];
-
-        if (!empty($filters['status']) && in_array($filters['status'], self::STATUSES, true)) {
-            $clauses[] = 'status = :status';
-            $params['status'] = $filters['status'];
-        }
-        if (!empty($filters['type']) && in_array($filters['type'], ['consultation', 'follow_up'], true)) {
-            $clauses[] = 'type = :type';
-            $params['type'] = $filters['type'];
+        foreach (['status', 'type'] as $key) {
+            if (!empty($filters[$key]) && (string) ($row[$key] ?? '') !== (string) $filters[$key]) {
+                return false;
+            }
         }
         if (!empty($filters['q'])) {
-            $clauses[] = '(full_name LIKE :q OR phone LIKE :q OR email LIKE :q OR reference_code LIKE :q)';
-            $params['q'] = '%' . str_replace(['%', '_'], ['\%', '\_'], (string) $filters['q']) . '%';
+            $haystack = mb_strtolower(implode(' ', array_map(static fn (string $key): string => (string) ($row[$key] ?? ''), [
+                'full_name', 'phone', 'email', 'reference_code',
+            ])));
+            if (!str_contains($haystack, mb_strtolower((string) $filters['q']))) {
+                return false;
+            }
         }
-        if (!empty($filters['from'])) {
-            $clauses[] = 'created_at >= :from';
-            $params['from'] = $filters['from'] . ' 00:00:00';
-        }
-        if (!empty($filters['to'])) {
-            $clauses[] = 'created_at <= :to';
-            $params['to'] = $filters['to'] . ' 23:59:59';
-        }
+        $created = substr((string) ($row['created_at'] ?? ''), 0, 10);
 
-        return [implode(' AND ', $clauses), $params];
+        return (empty($filters['from']) || $created >= (string) $filters['from'])
+            && (empty($filters['to']) || $created <= (string) $filters['to']);
     }
 
     public static function generateReference(string $type): string

@@ -7,7 +7,7 @@ use App\Core\Logger;
 use App\Core\Paths;
 
 /**
- * Append-only JSONL writer used as a durable fallback whenever MySQL is
+ * Append-only JSONL writer used as a durable fallback whenever MongoDB is
  * unavailable. Files live in storage/submissions and are grouped by kind and
  * month, e.g. appointments-2026-10.jsonl.
  */

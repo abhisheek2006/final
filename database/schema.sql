@@ -1,12 +1,8 @@
 -- ===========================================================================
--- Swasti Homoeo Clinic — database schema
+-- Legacy MySQL schema for existing installations only.
 --
--- Import with phpMyAdmin (hPanel ▸ Databases ▸ phpMyAdmin ▸ Import) or:
---     mysql -u USER -p DBNAME < database/schema.sql
---
--- The application degrades safely when MySQL is unreachable: bookings and
--- messages are written to storage/submissions/*.jsonl instead. Import this
--- schema to turn that fallback off.
+-- The application now uses MongoDB. Keep this schema only as a reference for
+-- source installations being migrated with tools/migrate-mysql-to-mongodb.php.
 -- ===========================================================================
 
 SET NAMES utf8mb4;
