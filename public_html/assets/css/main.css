@@ -5465,3 +5465,21 @@ a:hover {
         transition: none;
     }
 }
+
+
+.phone-input {
+    display: grid;
+    grid-template-columns: minmax(145px, .9fr) minmax(0, 1.5fr);
+    gap: 8px;
+}
+.phone-input__country {
+    min-width: 0;
+    padding-left: 10px;
+    padding-right: 34px;
+    font-size: .88rem;
+}
+.phone-input__number { min-width: 0; }
+@media (max-width: 420px) {
+    .phone-input { grid-template-columns: minmax(118px, .9fr) minmax(0, 1.4fr); gap: 6px; }
+    .phone-input__country { padding-left: 8px; padding-right: 30px; font-size: .8rem; }
+}
