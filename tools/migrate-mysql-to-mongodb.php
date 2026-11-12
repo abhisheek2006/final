@@ -20,68 +20,69 @@ if (!MongoDatabase::isAvailable()) {
     exit(1);
 }
 
-$host = Env::string('LEGACY_MYSQL_HOST', Env::string('DB_HOST', 'localhost'));
-$port = Env::int('LEGACY_MYSQL_PORT', Env::int('DB_PORT', 3306));
-$name = Env::string('LEGACY_MYSQL_DATABASE', Env::string('DB_DATABASE', ''));
-$user = Env::string('LEGACY_MYSQL_USERNAME', Env::string('DB_USERNAME', ''));
-$pass = Env::string('LEGACY_MYSQL_PASSWORD', Env::string('DB_PASSWORD', ''));
-
-if ($name === '' || $user === '') {
-    fwrite(STDERR, "Set the source MySQL credentials in LEGACY_MYSQL_* in .env.\n");
-    exit(1);
-}
-
-try {
-    $pdo = new PDO(
-        sprintf('mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4', $host, $port, $name),
-        $user,
-        $pass,
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
-    );
-} catch (Throwable $e) {
-    fwrite(STDERR, "Could not connect to the source MySQL database: " . $e::class . "\n");
-    exit(1);
-}
-
-$tables = [
-    'users' => 'users',
-    'appointments' => 'appointments',
-    'messages' => 'messages',
-    'faqs' => 'faqs',
-];
 $totals = ['imported' => 0, 'skipped' => 0];
+$name = Env::string('LEGACY_MYSQL_DATABASE', '');
+$user = Env::string('LEGACY_MYSQL_USERNAME', '');
 
-foreach ($tables as $table => $collection) {
+// MySQL is an optional source only. With no legacy credentials, continue by
+// importing JSONL fallback submissions and seeding the default FAQ collection.
+if ($name !== '' && $user !== '') {
+    $host = Env::string('LEGACY_MYSQL_HOST', 'localhost');
+    $port = Env::int('LEGACY_MYSQL_PORT', 3306);
+    $pass = Env::string('LEGACY_MYSQL_PASSWORD', '');
+
     try {
-        $rows = $pdo->query('SELECT * FROM `' . $table . '`')->fetchAll();
-    } catch (Throwable) {
-        fwrite(STDERR, "Could not read source table {$table}; migration stopped.\n");
+        $pdo = new PDO(
+            sprintf('mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4', $host, $port, $name),
+            $user,
+            $pass,
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
+        );
+    } catch (Throwable $e) {
+        fwrite(STDERR, "Could not connect to the configured legacy MySQL source: " . $e::class . "\n");
         exit(1);
     }
 
-    foreach ($rows as $row) {
-        if (MongoDatabase::insertImported($collection, $row)) {
-            $totals['imported']++;
-        } else {
-            $totals['skipped']++;
+    $tables = [
+        'users' => 'users',
+        'appointments' => 'appointments',
+        'messages' => 'messages',
+        'faqs' => 'faqs',
+    ];
+    foreach ($tables as $table => $collection) {
+        try {
+            $rows = $pdo->query('SELECT * FROM `' . $table . '`')->fetchAll();
+        } catch (Throwable) {
+            fwrite(STDERR, "Could not read source table {$table}; migration stopped.\n");
+            exit(1);
         }
-    }
-    fwrite(STDOUT, sprintf("%s: %d source records processed\n", $table, count($rows)));
-}
 
-try {
-    $rows = $pdo->query('SELECT bucket_key, hits, window_start, updated_at FROM `rate_limits`')->fetchAll();
-    foreach ($rows as $row) {
-        if (MongoDatabase::insertImportedRateLimit($row)) {
-            $totals['imported']++;
-        } else {
-            $totals['skipped']++;
+        foreach ($rows as $row) {
+            if (MongoDatabase::insertImported($collection, $row)) {
+                $totals['imported']++;
+            } else {
+                $totals['skipped']++;
+            }
         }
+        fwrite(STDOUT, sprintf("%s: %d source records processed\n", $table, count($rows)));
     }
-    fwrite(STDOUT, sprintf("rate_limits: %d source records processed\n", count($rows)));
-} catch (Throwable) {
-    fwrite(STDERR, "Could not read source table rate_limits; migration stopped.\n");
-    exit(1);
+
+    try {
+        $rows = $pdo->query('SELECT bucket_key, hits, window_start, updated_at FROM `rate_limits`')->fetchAll();
+        foreach ($rows as $row) {
+            if (MongoDatabase::insertImportedRateLimit($row)) {
+                $totals['imported']++;
+            } else {
+                $totals['skipped']++;
+            }
+        }
+        fwrite(STDOUT, sprintf("rate_limits: %d source records processed\n", count($rows)));
+    } catch (Throwable) {
+        fwrite(STDERR, "Could not read source table rate_limits; migration stopped.\n");
+        exit(1);
+    }
+} else {
+    fwrite(STDOUT, "No legacy MySQL credentials configured; skipping MySQL import.\n");
 }
 
 foreach (['appointments' => 'appointments', 'messages' => 'messages'] as $kind => $collection) {
@@ -95,5 +96,8 @@ foreach (['appointments' => 'appointments', 'messages' => 'messages'] as $kind =
     }
     fwrite(STDOUT, sprintf("%s JSONL fallback: %d records processed\n", $kind, count($rows)));
 }
+
+// Creates the bundled FAQ documents once, so a fresh MongoDB database is ready.
+\App\Models\Faq::all();
 
 fwrite(STDOUT, sprintf("Migration finished. Imported: %d; already present/skipped: %d.\n", $totals['imported'], $totals['skipped']));
