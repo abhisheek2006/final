@@ -33,7 +33,7 @@
 <link rel="apple-touch-icon" href="/assets/images/icons/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 
-<link rel="stylesheet" href="/assets/css/main.css?v=414545">
+<link rel="stylesheet" href="/assets/css/main.css?v=booking-20261112">
 <link rel="stylesheet" href="/assets/css/footer.css?v=061730">
 <link rel="stylesheet" href="/assets/css/responsive.css?v=412478">
 </head>
@@ -237,27 +237,29 @@
 
         <div class="field">
             <label class="field__label" for="phone">Phone number <span class="field__req" aria-hidden="true">*</span></label>
-            <input class="field__input" type="tel" id="phone" name="phone" required
-                   autocomplete="tel" maxlength="25" inputmode="tel" placeholder="10-digit mobile number"
-                   value=""
-                   aria-describedby="phone-help"
-                   >
+            <div class="phone-input">
+                <select class="field__input phone-input__country" name="phone_country_code" aria-label="Country calling code">
+                    <option value="+91" selected>India (+91)</option>
+                    <option value="+1">US / Canada (+1)</option>
+                    <option value="+44">UK (+44)</option>
+                    <option value="+61">Australia (+61)</option>
+                    <option value="+65">Singapore (+65)</option>
+                    <option value="+971">UAE (+971)</option>
+                    <option value="+880">Bangladesh (+880)</option>
+                    <option value="+977">Nepal (+977)</option>
+                </select>
+                <input class="field__input phone-input__number" type="tel" id="phone" name="phone" required
+                       autocomplete="tel-national" maxlength="15" inputmode="tel" placeholder="10-digit mobile number"
+                       value="" aria-describedby="phone-help">
+            </div>
             <p class="field__help" id="phone-help">We call or WhatsApp this number to confirm your slot.</p>
-                    </div>
+        </div>
 
         <div class="field">
             <label class="field__label" for="age">Age <span class="field__req" aria-hidden="true">*</span></label>
-            <input class="field__input" type="number" id="age" name="age" required
-                   min="0" max="130" step="1" inputmode="numeric" placeholder="Years"
-                   value=""
-                   list="age-presets"
-                   aria-describedby="age-help"
-                   >
-            <datalist id="age-presets">
-                <option value="1"></option><option value="5"></option><option value="10"></option>
-                <option value="18"></option><option value="35"></option><option value="55"></option>
-                <option value="70"></option>
-            </datalist>
+            <input class="field__input" type="text" id="age" name="age" required
+                   maxlength="3" inputmode="numeric" pattern="[0-9]{1,3}" placeholder="Years"
+                   value="" aria-describedby="age-help">
             <p class="field__help" id="age-help">In years. Helps us choose a safe dose and potency.</p>
                     </div>
 
@@ -570,6 +572,6 @@
 </footer>
 
 <script src="/assets/js/navigation.js?v=943895" defer></script>
-<script src="/assets/js/main.js?v=412402" defer></script>
+<script src="/assets/js/main.js?v=booking-20261112" defer></script>
 </body>
 </html>
