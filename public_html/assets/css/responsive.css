@@ -38,12 +38,6 @@
         --header-h: 70px;
     }
 
-    /* Keep the phone header anchored like the laptop header. */
-    .header {
-        position: sticky;
-        top: 0;
-        z-index: 90;
-    }
 
     .nav {
         display: none;
@@ -284,7 +278,7 @@
     :root {
         --section-y: 56px;
         --gutter: 18px;
-        --header-h: 64px;
+        --header-h: 68px;
     }
 
     html {
@@ -294,6 +288,18 @@
     body {
         font-size: 16px;
         overflow-x: hidden;
+        padding-top: var(--header-h);
+    }
+
+    .header {
+        position: fixed;
+        inset: 0 0 auto;
+        width: 100%;
+        z-index: 90;
+    }
+
+    .header__inner {
+        min-height: 68px;
     }
 
     .brand__mark {
