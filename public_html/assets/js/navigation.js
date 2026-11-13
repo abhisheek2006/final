@@ -9,9 +9,9 @@
 
     if (header) {
         var ticking = false;
-
         var onScroll = function () {
-            header.classList.toggle('is-stuck', window.pageYOffset > 8);
+            var currentY = Math.max(0, window.pageYOffset);
+            header.classList.toggle('is-stuck', currentY > 8);
             ticking = false;
         };
 
@@ -22,6 +22,7 @@
             }
         }, { passive: true });
 
+        window.addEventListener('resize', onScroll, { passive: true });
         onScroll();
     }
 

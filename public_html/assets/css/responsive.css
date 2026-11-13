@@ -38,7 +38,13 @@
         --header-h: 70px;
     }
 
-    /* Header */
+    /* Keep the phone header anchored like the laptop header. */
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 90;
+    }
+
     .nav {
         display: none;
     }
@@ -290,7 +296,6 @@
         overflow-x: hidden;
     }
 
-    /* Header */
     .brand__mark {
         width: 38px;
         height: 38px;

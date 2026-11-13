@@ -33,9 +33,9 @@
 <link rel="apple-touch-icon" href="/assets/images/icons/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 
-<link rel="stylesheet" href="/assets/css/main.css?v=booking-20261112">
+<link rel="stylesheet" href="/assets/css/main.css?v=sticky-header-20261113">
 <link rel="stylesheet" href="/assets/css/footer.css?v=061730">
-<link rel="stylesheet" href="/assets/css/responsive.css?v=412478">
+<link rel="stylesheet" href="/assets/css/responsive.css?v=sticky-header-mobile-20261113">
 </head>
 <body class="page page--book-consultation">
 
@@ -140,13 +140,13 @@
                                                     </li>
                                     </ol>
             </nav>
-
+            
                             <p class="eyebrow eyebrow--light">Appointment request</p>
-
+            
             <h1 class="page-hero__title">Book your consultation</h1>
 
                             <p class="page-hero__lead">Tell us briefly what is troubling you and when you would like to come in. We will call you to confirm the exact appointment time.</p>
-
+            
                     </div>
 
             </div>
@@ -202,7 +202,7 @@
                     </p>
                 </div>
             </aside>
-
+            
             <div class="panel" id="book-consultation-form">
                 <h2 class="panel__title">Request your appointment</h2>
                 <p class="panel__lead">Tell us what you would like treated and choose a preferred slot. We confirm the exact time by phone or WhatsApp, usually the same day. Booking is free.</p>
@@ -221,7 +221,7 @@
     <label for="website">Website (leave this field empty)</label>
     <input type="text" id="website" name="website" value="" tabindex="-1" autocomplete="off" maxlength="120">
 </div>
-<input type="hidden" name="form_started_at" value="1794407354">
+<input type="hidden" name="form_started_at" value="1794570802">
     <p class="form__status" data-form-status role="status" aria-live="polite"></p>
 
     <div class="form__grid">
@@ -240,26 +240,30 @@
             <div class="phone-input">
                 <select class="field__input phone-input__country" name="phone_country_code" aria-label="Country calling code">
                     <option value="+91" selected>India (+91)</option>
-                    <option value="+1">US / Canada (+1)</option>
-                    <option value="+44">UK (+44)</option>
-                    <option value="+61">Australia (+61)</option>
-                    <option value="+65">Singapore (+65)</option>
-                    <option value="+971">UAE (+971)</option>
-                    <option value="+880">Bangladesh (+880)</option>
-                    <option value="+977">Nepal (+977)</option>
+                    <option value="+1" >US / Canada (+1)</option>
+                    <option value="+44" >UK (+44)</option>
+                    <option value="+61" >Australia (+61)</option>
+                    <option value="+65" >Singapore (+65)</option>
+                    <option value="+971" >UAE (+971)</option>
+                    <option value="+880" >Bangladesh (+880)</option>
+                    <option value="+977" >Nepal (+977)</option>
                 </select>
                 <input class="field__input phone-input__number" type="tel" id="phone" name="phone" required
-                       autocomplete="tel-national" maxlength="15" inputmode="tel" placeholder="10-digit mobile number"
-                       value="" aria-describedby="phone-help">
+                   autocomplete="tel-national" maxlength="15" inputmode="tel" placeholder="10-digit mobile number"
+                   value=""
+                   aria-describedby="phone-help"
+                   >
             </div>
             <p class="field__help" id="phone-help">We call or WhatsApp this number to confirm your slot.</p>
-        </div>
+                    </div>
 
         <div class="field">
             <label class="field__label" for="age">Age <span class="field__req" aria-hidden="true">*</span></label>
             <input class="field__input" type="text" id="age" name="age" required
                    maxlength="3" inputmode="numeric" pattern="[0-9]{1,3}" placeholder="Years"
-                   value="" aria-describedby="age-help">
+                   value=""
+                   aria-describedby="age-help"
+                   >
             <p class="field__help" id="age-help">In years. Helps us choose a safe dose and potency.</p>
                     </div>
 
@@ -276,8 +280,8 @@
         <div class="field">
             <label class="field__label" for="preferred_date">Preferred date <span class="field__req" aria-hidden="true">*</span></label>
             <input class="field__input" type="date" id="preferred_date" name="preferred_date" required
-                   min="2026-11-11"
-                   max="2027-01-10"
+                   min="2026-11-13"
+                   max="2027-01-12"
                    value=""
                    data-no-sundays data-sunday-message="The clinic is closed on Sundays. Choose a Monday–Saturday date."
                    aria-describedby="preferred_date-help"
@@ -288,90 +292,120 @@
         <div class="field field--full">
             <span class="field__label" id="slot-label">Preferred time slot <span class="field__req" aria-hidden="true">*</span></span>
             <div class="chips" role="radiogroup" aria-labelledby="slot-label" data-chip-group="preferred_time">
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="09:00" data-chip-input required checked>
-                    <span class="chip__text">9:00 AM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="09:30" data-chip-input required>
-                    <span class="chip__text">9:30 AM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="10:00" data-chip-input required>
-                    <span class="chip__text">10:00 AM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="10:30" data-chip-input required>
-                    <span class="chip__text">10:30 AM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="11:00" data-chip-input required>
-                    <span class="chip__text">11:00 AM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="11:30" data-chip-input required>
-                    <span class="chip__text">11:30 AM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="12:00" data-chip-input required>
-                    <span class="chip__text">12:00 PM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="16:30" data-chip-input required>
-                    <span class="chip__text">4:30 PM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="17:00" data-chip-input required>
-                    <span class="chip__text">5:00 PM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="17:30" data-chip-input required>
-                    <span class="chip__text">5:30 PM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="18:00" data-chip-input required>
-                    <span class="chip__text">6:00 PM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="18:30" data-chip-input required>
-                    <span class="chip__text">6:30 PM</span>
-                </label>
-                <label class="chip">
-                    <input type="radio" name="preferred_time" value="19:00" data-chip-input required>
-                    <span class="chip__text">7:00 PM</span>
-                </label>
-            </div>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="09:00"
+                               data-chip-input required
+                               checked>
+                        <span class="chip__text">9:00 AM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="09:30"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">9:30 AM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="10:00"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">10:00 AM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="10:30"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">10:30 AM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="11:00"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">11:00 AM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="11:30"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">11:30 AM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="12:00"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">12:00 PM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="16:30"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">4:30 PM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="17:00"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">5:00 PM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="17:30"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">5:30 PM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="18:00"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">6:00 PM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="18:30"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">6:30 PM</span>
+                    </label>
+                                    <label class="chip">
+                        <input type="radio" name="preferred_time" value="19:00"
+                               data-chip-input required
+                               >
+                        <span class="chip__text">7:00 PM</span>
+                    </label>
+                            </div>
             <p class="field__help">OPD: Monday–Saturday, 9:00 AM–12:30 PM and 4:30–7:30 PM. Closed Sunday.</p>
-        </div>
+                    </div>
 
         <div class="field field--full">
             <label class="field__label" for="reason-category">What is the main problem? <span class="field__req" aria-hidden="true">*</span></label>
-            <select class="field__input field__input--problem" id="reason-category"
+                        <select class="field__input field__input--problem" id="reason-category"
                     data-own-words-select data-reason-hidden="reason-value"
                     data-reason-details="reason-details" required>
                 <option value="">Choose a problem</option>
-                <option value="Fever, cough or cold">Fever, cough or cold</option>
-                <option value="Acidity or stomach trouble">Acidity or stomach trouble</option>
-                <option value="Skin allergy or eczema">Skin allergy or eczema</option>
-                <option value="Back or joint pain">Back or joint pain</option>
-                <option value="Women’s health concern">Women’s health concern</option>
-                <option value="Anxiety or sleep problem">Anxiety or sleep problem</option>
-                <option value="Childhood complaint">Childhood complaint</option>
-                <option value="Weight or lifestyle concern">Weight or lifestyle concern</option>
-                <option value="__custom__">In your own words</option>
+                                    <option value="Fever, cough or cold" >Fever, cough or cold</option>
+                                    <option value="Acidity or stomach trouble" >Acidity or stomach trouble</option>
+                                    <option value="Skin allergy or eczema" >Skin allergy or eczema</option>
+                                    <option value="Back or joint pain" >Back or joint pain</option>
+                                    <option value="Women’s health concern" >Women’s health concern</option>
+                                    <option value="Anxiety or sleep problem" >Anxiety or sleep problem</option>
+                                    <option value="Childhood complaint" >Childhood complaint</option>
+                                    <option value="Weight or lifestyle concern" >Weight or lifestyle concern</option>
+                                <option value="__custom__" >In your own words</option>
             </select>
-            <input type="hidden" id="reason-value" name="reason" value="">
+            <input type="hidden" id="reason-value" name="reason"
+                   value=""
+                   >
             <div class="field field--full" id="reason-details-wrap" hidden>
                 <label class="field__label field__label--sub" for="reason-details">In your own words <span class="field__req" aria-hidden="true">*</span></label>
-                <textarea class="field__input field__textarea" id="reason-details" rows="4" disabled
-                          maxlength="1500" placeholder="Tell us what is troubling you..." data-counter="reason-counter"
-                          aria-describedby="reason-help reason-counter"></textarea>
+                <textarea class="field__input field__textarea" id="reason-details" name="reason" rows="4"
+                          disabled maxlength="1500"
+                          placeholder="Tell us what is troubling you..." data-counter="reason-counter"
+                          aria-describedby="reason-help reason-counter"
+                          ></textarea>
                 <p class="field__meta">
                     <span class="field__help" id="reason-help">Where is it, how long has it been there, what makes it better or worse?</span>
                     <span class="field__count" id="reason-counter" data-count-for="reason-details">0 / 1500</span>
                 </p>
             </div>
-        </div>
+                    </div>
 
         <div class="field field--full">
             <label class="field__label" for="message">Anything else we should know? <span class="field__optional">optional</span></label>
@@ -428,10 +462,9 @@
             <div class="panel">
                 <h2 class="panel__title panel__title--sm">After you submit</h2>
                 <ul class="check-list check-list--tight">
-                                            <li><svg class="icon icon--xs" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13"/><path d="m13 7 5 5-5 5"/></svg> We will call you to confirm the exact time, usually the same working day.</li>
-                                            <li><svg class="icon icon--xs" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13"/><path d="m13 7 5 5-5 5"/></svg> If you cannot reach us, message the same number on WhatsApp and we will respond there.</li>
-
-                                            <li><svg class="icon icon--xs" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13"/><path d="m13 7 5 5-5 5"/></svg> If your condition is an emergency, do not wait for a confirmation — call 112.</li>
+                                                                    <li><svg class="icon icon--xs" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13"/><path d="m13 7 5 5-5 5"/></svg> We will call you to confirm the exact time, usually the same working day.</li>
+                                                                    <li><svg class="icon icon--xs" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13"/><path d="m13 7 5 5-5 5"/></svg> If you cannot reach us, message the same number on WhatsApp and we will respond there.</li>
+                                                                                            <li><svg class="icon icon--xs" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13"/><path d="m13 7 5 5-5 5"/></svg> If your condition is an emergency, do not wait for a confirmation — call 112.</li>
                                     </ul>
             </div>
 
@@ -445,7 +478,7 @@
                     <li><span><svg class="icon icon--xs" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.4 5.4 3.4 8.5S14.2 18.1 12 20.5c-2.2-2.4-3.4-5.4-3.4-8.5S9.8 5.9 12 3.5Z"/></svg></span> English, Hindi, Bengali</li>
                 </ul>
                 <p class="panel__actions">
-                    <a class="btn btn--whatsapp btn--sm btn--block" href="https://wa.me/917980644867?text=Hello%2C%20I%20would%20like%20to%20book%20a%20follow-up%20review." rel="noopener nofollow" target="_blank">
+                    <a class="btn btn--whatsapp btn--sm btn--block" href="https://wa.me/917980644867?text=Hello%2C%20I%20would%20like%20to%20book%20a%20consultation." rel="noopener nofollow" target="_blank">
                         <svg class="icon icon--xs" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.6A8.3 8.3 0 0 0 5.2 16L3.7 20.4 8.2 19a8.3 8.3 0 1 0 3.8-15.4Z"/><path d="M9.2 8.4c.3-.1.6 0 .8.4l.7 1.3c.1.3 0 .5-.2.7l-.5.5c.6 1.1 1.6 2 2.7 2.5l.5-.6c.2-.2.4-.2.6-.1l1.3.6c.4.2.5.5.3.9-.3.6-1.1.9-1.8.8-2-.3-4.4-2.6-4.7-4.5-.1-.6.2-1.3.9-1.5Z"/></svg> Prefer WhatsApp?
                     </a>
                 </p>
@@ -559,8 +592,7 @@
     <div class="site-footer__bottom">
         <div class="site-footer__container site-footer__bottom-inner">
             <p class="site-footer__copy">
-                &copy; 2026 Swasti Homoeo Clinic &middot;
-                Andaman Homoeo Health Care LLP. All rights reserved.
+                &copy; 2026 Swasti Homoeo Clinic. All rights reserved.
             </p>
 
             <ul class="site-footer__legal">
@@ -571,7 +603,7 @@
     </div>
 </footer>
 
-<script src="/assets/js/navigation.js?v=943895" defer></script>
-<script src="/assets/js/main.js?v=booking-20261112" defer></script>
+<script src="/assets/js/navigation.js?v=sticky-header-20261113" defer></script>
+<script src="/assets/js/main.js?v=506374" defer></script>
 </body>
 </html>

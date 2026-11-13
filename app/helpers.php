@@ -62,6 +62,17 @@ if (!function_exists('url')) {
     function url(string $path = '/'): string
     {
         $base = rtrim((string) Config::get('app.url', ''), '/');
+
+        // Keep locally generated links on the exact host and port being used.
+        if (Config::string('app.env', '') === 'local') {
+            $host = preg_replace('/[^A-Za-z0-9.\-:\[\]]/', '', (string) ($_SERVER['HTTP_HOST'] ?? '')) ?? '';
+            if ($host !== '') {
+                $isHttps = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off')
+                    || (int) ($_SERVER['SERVER_PORT'] ?? 0) === 443;
+                $base = ($isHttps ? 'https' : 'http') . '://' . $host;
+            }
+        }
+
         $path = '/' . ltrim($path, '/');
 
         if ($path === '/') {
@@ -80,7 +91,9 @@ if (!function_exists('asset')) {
         $file = Paths::public() . $path;
         $version = is_file($file) ? substr((string) filemtime($file), -6) : '1';
 
-        return url($path) . '?v=' . $version;
+        // Assets should stay on the current origin. APP_URL may point at the
+        // production host (or a different local port) while developing locally.
+        return $path . '?v=' . $version;
     }
 }
 

@@ -14,7 +14,7 @@ $errors = is_array($errors ?? null) ? $errors : [];
 
 <div class="auth-card">
     <div class="auth-card__head">
-        <img class="auth-card__logo" src="<?= e(url('/assets/images/icons/logo.png')) ?>" width="52" height="52" alt="">
+        <img class="auth-card__logo" src="/assets/images/icons/logo.png" width="52" height="52" alt="">
         <h1 class="auth-card__title">Clinic admin sign in</h1>
         <p class="auth-card__sub"><?= e((string) ($clinic['name'] ?? '')) ?> · Sri Vijaya Puram</p>
     </div>
@@ -42,7 +42,7 @@ $errors = is_array($errors ?? null) ? $errors : [];
         </div>
     <?php endif; ?>
 
-    <form class="form form--auth" method="post" action="<?= e(url('/admin/login')) ?>" novalidate>
+    <form class="form form--auth" method="post" action="/admin/login" novalidate>
         <?= csrf_field() ?>
 
         <div class="field<?= isset($errors['email']) ? ' field--error' : '' ?>">

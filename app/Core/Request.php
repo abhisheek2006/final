@@ -292,6 +292,16 @@ final class Request
     public function url(string $path = '/'): string
     {
         $base = rtrim((string) Config::get('app.url', ''), '/');
+
+        // In local development, follow the host and port used for this request.
+        // APP_URL may be left on another port from a previous dev-server run.
+        if (Config::string('app.env', '') === 'local') {
+            $host = preg_replace('/[^A-Za-z0-9.\-:\[\]]/', '', (string) ($this->server['HTTP_HOST'] ?? '')) ?? '';
+            if ($host !== '') {
+                $base = ($this->isHttps() ? 'https' : 'http') . '://' . $host;
+            }
+        }
+
         $path = '/' . ltrim($path, '/');
 
         if ($path === '/') {
