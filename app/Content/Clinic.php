@@ -74,21 +74,20 @@ final class Clinic
      */
     public static function mapQuery(): string
     {
-        return 'SWASTI HOMOEO CLINIC | Dr. Smriti Das, BHMS, MD (Hom) | NH4 main road, '
-            . 'Garacharma, near Susane roses, Andaman and Nicobar Islands 744105';
+        return '11.6152895, 92.7046332';
     }
 
-    /**
-     * Google Maps link for the clinic, used by the footer location icon, the
-     * contact page button and the schema.org hasMap property.
-     *
-     * Searches by place name so Google lands on the clinic listing rather than
-     * a bare lat/lng point.
-     */
+    /** Location search URL for the clinic's schema.org hasMap property. */
     public static function mapUrl(): string
     {
         return 'https://www.google.com/maps/search/?api=1&query='
             . rawurlencode(self::mapQuery());
+    }
+
+    /** Google Maps directions pinned to the clinic entrance coordinates. */
+    public static function directionsUrl(): string
+    {
+        return 'https://www.google.com/maps/dir/?api=1&destination=11.6152895%2C92.7046332';
     }
 
     /**
@@ -250,9 +249,8 @@ final class Clinic
         return [
             [
                 'title' => 'Who we are',
-                'body'  => 'Swasti Homoeo Clinic ("we", "us") is operated by ' . self::LEGAL_NAME . ', '
-                    . 'a Limited Liability Partnership registered in Sri Vijaya Puram, Andaman and Nicobar '
-                    . 'Islands, India. For any question about this policy or your health information, '
+                'body'  => 'Swasti Homoeo Clinic ("we", "us") provides the clinic services described in '
+                    . 'this policy. For any question about this policy or your health information, '
                     . 'contact us at ' . Config::string('clinic.email', 'info@swastihomeo.com') . '.',
             ],
             [

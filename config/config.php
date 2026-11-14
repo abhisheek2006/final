@@ -74,10 +74,10 @@ return [
         'phone'     => '+917980644867',
         'whatsapp'  => '917980644867',
         'email'     => 'info@swastihomeo.com',
-        'facebook'  => '',
-        'instagram' => '',
+        'facebook'  => 'https://www.facebook.com/profile.php?id=61559770017827',
+        'instagram' => 'https://www.instagram.com/swasti_homoeoclinic/',
         'x'         => '',
-        'youtube'   => '',
+        'youtube'   => 'https://www.youtube.com/live/zF70bfgiM64',
     ],
 
     'security' => [

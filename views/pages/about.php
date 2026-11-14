@@ -90,10 +90,6 @@
         <header class="section__head" data-reveal>
             <p class="eyebrow">In their words</p>
             <h2 class="section__title">What patients tell us</h2>
-            <p class="section__lead section__lead--center">
-                Real feedback matters more than marketing, so this is exactly what we are told — including the
-                parts that are not flattering.
-            </p>
         </header>
 
         <div class="testimonials">
@@ -111,7 +107,7 @@
                         <?php endif; ?>
                         <span>
                             <span class="testimonial__name"><?= e($testimonial['name']) ?></span>
-                            <span class="testimonial__meta-line">Verified patient<?= ($testimonial['when'] ?? '') !== '' ? ' · ' . e((string) $testimonial['when']) : '' ?></span>
+                            <span class="testimonial__meta-line"><?= !empty($testimonial['source']) ? e((string) $testimonial['source']) : 'Verified patient' ?><?= ($testimonial['when'] ?? '') !== '' ? ' · ' . e((string) $testimonial['when']) : '' ?></span>
                         </span>
                         <?= stars((int) $testimonial['rating']) ?>
                     </figcaption>

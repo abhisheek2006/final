@@ -26,6 +26,24 @@ final class Testimonials
     {
         return [
             [
+                'name'     => 'Swati',
+                'when'     => '6 days ago',
+                'source'   => 'Google review',
+                'rating'   => 5,
+                'quote'    => 'Highly recommended! I visited Swasti Hospital for a severe hair loss issue that was making me very anxious. Instead of just giving me a quick fix, the doctor took the time to beautifully explain the root cause.',
+                'avatar'   => '',
+                'featured' => true,
+            ],
+            [
+                'name'     => 'Suparna Sarkar',
+                'when'     => 'Edited 8 months ago',
+                'source'   => 'Google review',
+                'rating'   => 5,
+                'quote'    => 'I consulted Dr. Smriti Das for my endometriosis treatment, and I am very satisfied with the care I received. She is a very good doctor—extremely patient, caring, and attentive. She explains everything clearly and treats her patients with genuine compassion. I would highly recommend her to anyone seeking proper and thoughtful medical care.',
+                'avatar'   => '/assets/images/patients/patient-suparna-sarkar.png',
+                'featured' => true,
+            ],
+            [
                 'name'     => 'Dheerak Sharma',
                 'when'     => 'a year ago',
                 'rating'   => 5,
@@ -67,11 +85,12 @@ final class Testimonials
             ],
             [
                 'name'     => 'Sweety Teddy',
-                'when'     => '11 months ago',
+                'when'     => 'a year ago',
+                'source'   => 'Google review · 6 reviews · 2 photos',
                 'rating'   => 5,
                 'quote'    => 'No words to express our gratitude to Dr smriti. She is highly skilled homeopathic doctor who has done an excellent job in my case where many of the doctors and allopathic medicines couldn\'t help me. The greatest thing in her is her friendly nature and her service moto of charging very less.Two years ago I was diagnosed with endometriotic cyst of 7cm in right ovary and was asked to get the oophorectomy done asap. Consulted many doctors and spend lot of money but no use. I have faced horrible things like excess fatigue, prolonged and heavy periods, excessive pain in the right leg, eczema, loss of appetite,sleeplessness. Have completely lost hope on life and thought never be able to become normal again but fortunately I met Dr smriti 6 months back and can\'t believe the magic she has done to me that too by charging very very less amount for treatment. Frankly saying I am back to my beautiful life again. Cyst got reduced to much more extent, periods got regularised, my appetite is back, got rid of eczema, able to sleep peacefully, doing household things with an ease.She has not only treated me but my husband and father too. Thanks to such an amazing doctor 🙏',
-                'avatar'   => '/assets/images/patients/patient-06.png',
-                'featured' => false,
+                'avatar'   => '',
+                'featured' => true,
             ],
             [
                 'name'     => 'Rahul Sahu',
@@ -103,6 +122,24 @@ final class Testimonials
                 'rating'   => 5,
                 'quote'    => 'Excellent experience at Swasthi Homeo Clinic! Dr. Smriti is knowledgeable, friendly, and genuinely cares about patients\' well-being. Effective treatment and personalized attention. Highly recommend!',
                 'avatar'   => '/assets/images/patients/patient-10.png',
+                'featured' => true,
+            ],
+            [
+                'name'     => 'Dr FARHEEN',
+                'when'     => 'a year ago',
+                'source'   => 'Google review · Local Guide · 37 reviews · 4 photos',
+                'rating'   => 5,
+                'quote'    => 'Great experience, definitely recommend patients especially facing reproductive health issues, issues related to PCOD, Thyroid disorders, Endometriosis, Fibroid, cysts to consult the Renowned Homeopath and get the benefits via Homeopathy remedies.',
+                'avatar'   => '',
+                'featured' => true,
+            ],
+            [
+                'name'     => 'Seema Devi',
+                'when'     => 'Edited a year ago',
+                'source'   => 'Google review',
+                'rating'   => 5,
+                'quote'    => 'The treatment is affordable and my itching problems is completely cured and even my daughter is taking medicines for her irregular periods and severe cramps but now after taking medicines her periods are on time and with much less pain.',
+                'avatar'   => '',
                 'featured' => true,
             ],
         ];

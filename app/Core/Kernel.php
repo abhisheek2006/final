@@ -5,6 +5,7 @@ namespace App\Core;
 
 use App\Core\Exceptions\HttpException;
 use App\Services\Seo;
+use App\Services\MaintenanceMode;
 use Throwable;
 
 /**
@@ -55,7 +56,22 @@ final class Kernel
         $this->boot();
 
         try {
-            $response = $this->router->dispatch($request);
+            $path = rtrim($request->path(), '/') ?: '/';
+            $admin = $path === '/admin' || str_starts_with($path, '/admin/');
+            $operational = in_array($path, ['/health', '/robots.txt', '/sitemap.xml'], true);
+            $maintenance = (!$admin && !$operational) ? MaintenanceMode::publicStatus() : ['enabled' => false];
+
+            if (!empty($maintenance['enabled'])) {
+                $message = htmlspecialchars((string) $maintenance['message'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $html = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+                    . '<title>Website maintenance · Swasti Homoeo Clinic</title><body style="margin:0;font:16px/1.6 system-ui,sans-serif;background:#f4f8f7;color:#183b3a;display:grid;min-height:100vh;place-items:center;padding:24px;box-sizing:border-box">'
+                    . '<main style="max-width:620px;padding:48px;background:#fff;border:1px solid #dce8e5;border-radius:20px;text-align:center;box-shadow:0 16px 48px rgba(21,73,67,.08)"><p style="color:#0f6f68;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Swasti Homoeo Clinic</p><h1 style="font-family:Georgia,serif;font-size:clamp(2rem,7vw,3rem);line-height:1.1">We’ll be back soon</h1><p>' . $message . '</p><a href="tel:+917980644867" style="display:inline-block;margin-top:16px;color:#0f6f68;font-weight:700">Call the clinic</a></main></body></html>';
+                $response = (new Response($html, 503))
+                    ->setHeader('Content-Type', 'text/html; charset=UTF-8')
+                    ->noCache();
+            } else {
+                $response = $this->router->dispatch($request);
+            }
         } catch (HttpException $e) {
             $response = $this->renderHttpException($request, $e);
         } catch (Throwable $e) {

@@ -59,6 +59,7 @@ $currentPath = $currentPath === '/' ? '/' : rtrim($currentPath, '/');
 <link rel="apple-touch-icon" href="<?= e(url('/assets/images/icons/apple-touch-icon.png')) ?>">
 <link rel="manifest" href="<?= e(url('/site.webmanifest')) ?>">
 
+<script src="<?= e(asset('/assets/js/maintenance-gate.js')) ?>"></script>
 <link rel="stylesheet" href="<?= e(asset('/assets/css/main.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('/assets/css/footer.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('/assets/css/responsive.css')) ?>">

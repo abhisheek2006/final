@@ -53,69 +53,32 @@ final class FaqData
                         . 'available on request.',
                 ],
                 [
-                    'q' => 'Is homoeopathy safe without side effects?',
-                    'a' => 'Homoeopathic medicines are highly diluted and, when prescribed in the correct '
-                        . 'potency and dose, are generally very well tolerated. "No side effects" is not '
-                        . 'the right claim, though — some patients notice a temporary change in '
-                        . 'symptoms after starting a remedy, and the remedy must be chosen for the right '
-                        . 'person. The real risk is delaying necessary medical care, which is why we '
-                        . 'always tell you when a condition needs hospital treatment.',
-                ],
-                [
                     'q' => 'What are your consultation timings?',
                     'a' => 'Monday to Saturday the OPD runs from 9:00 AM to 12:30 PM and 4:30 PM to 7:30 PM. '
-                        . 'The clinic is closed on Sunday. Patients are always given a specific slot so the waiting '
-                        . 'time is short.',
-                ],
-            ],
-            'Booking and fees' => [
-                [
-                    'q' => 'What does a consultation cost, and is it inclusive of medicines?',
-                    'a' => 'The consultation fee is separate from the cost of the dispensed remedy, and '
-                        . 'the remedy cost depends on the potencies and quantities your prescription '
-                        . 'requires. Both figures are confirmed to you in writing before anything is '
-                        . 'dispensed, and a receipt is issued. Follow-up review fees are lower than a '
-                        . 'first consultation.',
-                ],
-                [
-                    'q' => 'Is a follow-up appointment necessary?',
-                    'a' => 'Yes. Homoeopathic prescribing depends on how your symptoms are responding, so '
-                        . 'review appointments let us continue an effective prescription, reduce it once '
-                        . 'things settle, or change it if it is not working. Most patients need two to four '
-                        . 'reviews before a meaningful judgement can be made.',
-                ],
-                [
-                    'q' => 'What should I bring to my first appointment?',
-                    'a' => 'Bring a list of every medicine you are currently taking — including '
-                        . 'supplements — with the doses, any previous prescriptions or investigation '
-                        . 'reports, and a rough timeline of how your symptoms have changed. If you can '
-                        . 'note down when your periods or sleep patterns changed, that is genuinely '
-                        . 'useful to the doctor.',
-                ],
-                [
-                    'q' => 'Can I be treated over phone or WhatsApp?',
-                    'a' => 'An online or telephone discussion is fine for a brief follow-up, for reviewing '
-                        . 'a prescription you have already been given, and for general guidance. A first '
-                        . 'consultation requires an in-person visit so that you can be examined and a '
-                        . 'complete history taken.',
+                        . 'The clinic is closed on Sunday.',
                 ],
             ],
             'Treatment and results' => [
                 [
-                    'q' => 'Can I stop my allopathic medicines once I feel better?',
-                    'a' => 'No. Do not stop, reduce or change any prescribed medicine without speaking to '
-                        . 'the doctor who prescribed it. In particular, insulin, blood-pressure and thyroid '
-                        . 'medicines, anti-epileptics, steroids and antibiotics must continue exactly as '
-                        . 'prescribed. Our aim is to work alongside your medical care, never to replace it '
-                        . 'unilaterally.',
+                    'q' => 'Is homoeopathy safe without side effects?',
+                    'a' => 'No treatment can be guaranteed to be free of side effects. Products labelled '
+                        . 'homeopathic may contain active ingredients and can cause side effects or '
+                        . 'interact with other medicines. Tell your qualified health care provider about '
+                        . 'any product you use, and do not delay or replace prescribed medical care.',
+                ],
+                [
+                    'q' => 'Can I take homoeopathic medicines alongside allopathic medication, or should I stop my current medicines?',
+                    'a' => 'Homoeopathy is sometimes used as a complementary approach, but good-quality evidence has not established that it acts quickly for acute conditions or treats long-standing disease. Do not stop, reduce or change prescribed medicines; discuss any complementary product with your qualified health care provider.',
                 ],
                 [
                     'q' => 'What should I avoid while taking treatment?',
-                    'a' => 'Take the remedy as prescribed, roughly half an hour away from meals, and avoid '
-                        . 'strong coffee, alcohol and very spicy or very oily food for the first few weeks. '
-                        . 'Do not rub the pills, keep them away from strong smells and camphor, and store '
-                        . 'the bottle tightly closed. Do not crush the pills to make them easier to swallow '
-                        . 'unless the doctor has told you to.',
+                    'a' => 'The clinic advises avoiding Ayurvedic medicines, Ayurvedic toothpaste and '
+                        . 'products containing Ayurvedic ingredients while taking a remedy. Also avoid '
+                        . 'crude or raw herbal substances such as aloe juice, giloy juice or churan, and '
+                        . 'strong-smelling substances such as ashwagandha, camphor, menthol, coffee, dark '
+                        . 'chocolate and tamarind. Keep the medicine in a cool, dry place away from '
+                        . 'direct sunlight. Do not stop prescribed medicines without speaking to the '
+                        . 'clinician who prescribed them.',
                 ],
                 [
                     'q' => 'Will homoeopathy work for my condition?',
@@ -128,50 +91,46 @@ final class FaqData
             'For children and parents' => [
                 [
                     'q' => 'Can homoeopathy be given to infants and children?',
-                    'a' => 'Yes, with the correct potency and dose for the child’s age and '
-                        . 'sensitivity, and with the parent administering it rather than the child. A '
-                        . 'paediatric consultation takes longer because the history comes from you and '
-                        . 'every detail about feeding, sleep and behaviour matters.',
+                    'a' => 'Newborns and children should be assessed by a qualified paediatric clinician '
+                        . 'before any medicine is given. If a homeopathic product is being considered, '
+                        . 'discuss it and the child’s other medicines with the clinician. Do not delay or '
+                        . 'replace recommended paediatric care, vaccines or prescribed medicines. No '
+                        . 'product can be promised to be free of adverse effects.',
                 ],
                 [
                     'q' => 'Is homoeopathy safe during pregnancy?',
-                    'a' => 'It can be used under professional supervision once the pregnancy is confirmed by '
-                        . 'a qualified obstetrician. We will not prescribe during the first trimester '
-                        . 'except in exceptional circumstances, and we will always ask you to continue any '
-                        . 'medication your doctor has given you. Please bring your antenatal records to '
-                        . 'every visit.',
+                    'a' => 'If you are pregnant and have a fever, flu-like symptoms, excessive vomiting or '
+                        . 'urinary symptoms, contact your obstetrician or doctor promptly. These symptoms '
+                        . 'may need timely assessment and treatment. Discuss any complementary product '
+                        . 'with your obstetrician first, and do not use it instead of prescribed care.',
                 ],
                 [
                     'q' => 'Can I give my child a remedy from an earlier consultation?',
                     'a' => 'Please do not. A remedy is matched to one child’s symptom picture, and '
-                        . 'an old prescription is often not the right one for a new illness. Bring the old '
-                        . 'bottle to the visit so the doctor can review what was given and why.',
+                        . 'an old prescription may not be suitable for a new illness. Contact your child’s '
+                        . 'health care provider for advice about new or worsening symptoms.',
                 ],
             ],
-            'Emergencies and limits' => [
+            'Booking and fees' => [
                 [
-                    'q' => 'Does the clinic handle emergencies?',
-                    'a' => 'No. A homoeopathy clinic is not an emergency facility and we do not have the '
-                        . 'equipment, monitoring or surgical capability for one. For chest pain, breathing '
-                        . 'difficulty, sudden weakness, facial droop, heavy bleeding, loss of '
-                        . 'consciousness, a severe allergic reaction, a serious fall or a suspected '
-                        . 'poisoning, call 112 or go to the nearest emergency department immediately.',
+                    'q' => 'What does a consultation cost, and is it inclusive of medicines?',
+                    'a' => 'The consultation fee is separate from the cost of the dispensed remedy, and '
+                        . 'the remedy cost depends on the potencies and quantities your prescription '
+                        . 'requires. Both figures are confirmed to you in writing before anything is '
+                        . 'dispensed, and a receipt is issued. Follow-up review fees are lower than a '
+                        . 'first consultation.',
                 ],
                 [
-                    'q' => 'Can homoeopathy replace antibiotics or surgery?',
-                    'a' => 'No. Where antibiotics, surgery or hospital care are clinically indicated, that '
-                        . 'is the treatment of choice and we will say so. Homoeopathy is used as '
-                        . 'complementary care: it can support recovery, manage recurrent tendencies and '
-                        . 'sometimes reduce repeat prescriptions, but it does not substitute for '
-                        . 'necessary medical intervention.',
+                    'q' => 'What should I bring to my first appointment?',
+                    'a' => 'Bring your previous prescriptions, investigation reports, and details of your '
+                        . 'past medical history and family history.',
                 ],
                 [
-                    'q' => 'Why is a homoeopathy doctor always asking about my whole lifestyle?',
-                    'a' => 'Because classical homoeopathy works on the whole person rather than on a single '
-                        . 'symptom. Your sleep, digestion, temperature preference, thirst, mood, what you '
-                        . 'crave and what you dread, your menstrual pattern and your family history are all '
-                        . 'part of the "totality" the remedy is matched to. That is why the first '
-                        . 'consultation takes 30 to 45 minutes while a follow-up takes ten.',
+                    'q' => 'Can I be treated over phone or WhatsApp?',
+                    'a' => 'An online or telephone discussion is fine for a brief follow-up, for reviewing '
+                        . 'a prescription you have already been given, and for general guidance. A first '
+                        . 'consultation requires an in-person visit so that you can be examined and a '
+                        . 'complete history taken.',
                 ],
             ],
         ];

@@ -218,6 +218,7 @@ $unread           = (int) ($messageCounts['unread'] ?? 0);
             <div class="button-row">
                 <a class="btn btn--outline btn--xs" href="<?= e(url('/admin/faqs')) ?>"><?= icon('list', 'icon icon--xs', 14) ?> Manage FAQs</a>
                 <a class="btn btn--outline btn--xs" href="<?= e(url('/admin/messages')) ?>"><?= icon('inbox', 'icon icon--xs', 14) ?> Read messages</a>
+                <a class="btn btn--outline btn--xs" href="<?= e(url('/admin/maintenance')) ?>"><?= icon('clock', 'icon icon--xs', 14) ?> Maintenance mode</a>
                 <a class="btn btn--outline btn--xs" href="<?= e(url('/sitemap.xml')) ?>" target="_blank" rel="noopener"><?= icon('globe', 'icon icon--xs', 14) ?> sitemap.xml</a>
                 <a class="btn btn--outline btn--xs" href="<?= e(url('/health')) ?>" target="_blank" rel="noopener"><?= icon('activity', 'icon icon--xs', 14) ?> Health check</a>
             </div>

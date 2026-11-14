@@ -148,7 +148,7 @@ $waBooking = whatsapp_link(
                     <?php endif; ?>
                     <span>
                         <span class="testimonial__name"><?= e($testimonial['name']) ?></span>
-                        <span class="testimonial__meta-line">Verified patient<?= ($testimonial['when'] ?? '') !== '' ? ' · ' . e((string) $testimonial['when']) : '' ?></span>
+                        <span class="testimonial__meta-line"><?= !empty($testimonial['source']) ? e((string) $testimonial['source']) : 'Verified patient' ?><?= ($testimonial['when'] ?? '') !== '' ? ' · ' . e((string) $testimonial['when']) : '' ?></span>
                     </span>
                     <?= stars((int) $testimonial['rating']) ?>
                 </figcaption>

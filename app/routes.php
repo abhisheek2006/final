@@ -15,6 +15,7 @@ use App\Controllers\Admin\AppointmentController as AdminAppointmentController;
 use App\Controllers\Admin\AuthController as AdminAuthController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\FaqController as AdminFaqController;
+use App\Controllers\Admin\MaintenanceController as AdminMaintenanceController;
 use App\Controllers\Admin\MessageController as AdminMessageController;
 use App\Controllers\AppointmentController;
 use App\Controllers\ContactController;
@@ -76,6 +77,8 @@ $router->get('/admin',              [AdminDashboardController::class, 'index']);
 $router->get('/admin/login',        [AdminAuthController::class, 'showLogin']);
 $router->post('/admin/login',       [AdminAuthController::class, 'login']);
 $router->post('/admin/logout',      [AdminAuthController::class, 'logout']);
+$router->get('/admin/maintenance',  [AdminMaintenanceController::class, 'index']);
+$router->post('/admin/maintenance', [AdminMaintenanceController::class, 'update']);
 
 /* -------------------------------------------------------------------------- */
 /* Admin — appointments                                                        */

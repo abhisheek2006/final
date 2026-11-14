@@ -18,10 +18,10 @@
 use App\Content\Clinic;
 
 $socials = [
-    ['label' => 'Facebook',  'icon' => 'facebook',  'url' => (string) ($clinic['facebook'] ?? '')],
-    ['label' => 'Instagram', 'icon' => 'instagram', 'url' => (string) ($clinic['instagram'] ?? '')],
-    ['label' => 'YouTube',   'icon' => 'youtube',   'url' => (string) ($clinic['youtube'] ?? '')],
-    ['label' => 'Location',  'icon' => 'pin',       'url' => Clinic::mapUrl(), 'external' => true],
+    ['label' => 'Facebook',  'icon' => 'facebook',  'url' => (string) ($clinic['facebook'] ?? ''), 'external' => true],
+    ['label' => 'Instagram', 'icon' => 'instagram', 'url' => (string) ($clinic['instagram'] ?? ''), 'external' => true],
+    ['label' => 'YouTube',   'icon' => 'youtube',   'url' => (string) ($clinic['youtube'] ?? ''), 'external' => true],
+    ['label' => 'Location',  'icon' => 'pin',       'url' => Clinic::directionsUrl(), 'external' => true],
 ];
 
 /* The email opens a Gmail compose window rather than the visitor's own mail
@@ -111,7 +111,7 @@ $emailCompose = $email !== ''
                     </ul>
 
                     <a class="site-footer__directions"
-                       href="<?= e(Clinic::mapUrl()) ?>"
+                       href="<?= e(Clinic::directionsUrl()) ?>"
                        target="_blank" rel="noopener nofollow">
                         <?= icon('pin', 'site-footer__directions-icon', 18) ?>
                         <span>Get Directions</span>
@@ -128,8 +128,7 @@ $emailCompose = $email !== ''
     <div class="site-footer__bottom">
         <div class="site-footer__container site-footer__bottom-inner">
             <p class="site-footer__copy">
-                &copy; <?= e((string) $appYear) ?> Swasti Homoeo Clinic &middot;
-                <?= e(Clinic::LEGAL_NAME) ?>. All rights reserved.
+                &copy; <?= e((string) $appYear) ?> Swasti Homoeo Clinic. All rights reserved.
             </p>
 
             <ul class="site-footer__legal">

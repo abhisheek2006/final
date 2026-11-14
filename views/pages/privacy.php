@@ -25,9 +25,8 @@
 
         <div class="prose prose--legal">
             <p>
-                This policy applies to <?= e((string) $clinic['legal_name']) ?> ("we"), which operates
-                <?= e((string) $clinic['name']) ?> at <?= e((string) $clinic['address_full']) ?>. It covers
-                information submitted through the consultation, follow-up and contact forms on this website.
+                This policy explains how <?= e((string) $clinic['name']) ?> handles information submitted
+                through the consultation, follow-up and contact forms on this website.
             </p>
 
             <?php foreach ($privacySections as $index => $section): ?>
